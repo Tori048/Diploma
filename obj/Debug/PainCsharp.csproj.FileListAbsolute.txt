@@ -1,0 +1,55 @@
+C:\Users\Скит\Desktop\PainCsharp-2\PainCsharp-2\PainCsharp\bin\Debug\PainCsharp.exe.config
+C:\Users\Скит\Desktop\PainCsharp-2\PainCsharp-2\PainCsharp\bin\Debug\PainCsharp.exe
+C:\Users\Скит\Desktop\PainCsharp-2\PainCsharp-2\PainCsharp\bin\Debug\PainCsharp.pdb
+C:\Users\Скит\Desktop\PainCsharp-2\PainCsharp-2\PainCsharp\obj\Debug\PainCsharp.csprojAssemblyReference.cache
+C:\Users\Скит\Desktop\PainCsharp-2\PainCsharp-2\PainCsharp\obj\Debug\PainCsharp.Form1.resources
+C:\Users\Скит\Desktop\PainCsharp-2\PainCsharp-2\PainCsharp\obj\Debug\PainCsharp.Properties.Resources.resources
+C:\Users\Скит\Desktop\PainCsharp-2\PainCsharp-2\PainCsharp\obj\Debug\PainCsharp.csproj.GenerateResource.cache
+C:\Users\Скит\Desktop\PainCsharp-2\PainCsharp-2\PainCsharp\obj\Debug\PainCsharp.csproj.CoreCompileInputs.cache
+C:\Users\Скит\Desktop\PainCsharp-2\PainCsharp-2\PainCsharp\obj\Debug\PainCsharp.exe
+C:\Users\Скит\Desktop\PainCsharp-2\PainCsharp-2\PainCsharp\obj\Debug\PainCsharp.pdb
+C:\Users\Скит\Desktop\PainCsharp-2\PainCsharp-2\PainCsharp\obj\Debug\PainCsharp.Form2.resources
+C:\Users\dkoshel\Desktop\progi\PainCsharp\bin\Debug\PainCsharp.exe.config
+C:\Users\dkoshel\Desktop\progi\PainCsharp\bin\Debug\PainCsharp.exe
+C:\Users\dkoshel\Desktop\progi\PainCsharp\bin\Debug\PainCsharp.pdb
+C:\Users\dkoshel\Desktop\progi\PainCsharp\obj\Debug\PainCsharp.csprojAssemblyReference.cache
+C:\Users\dkoshel\Desktop\progi\PainCsharp\obj\Debug\PainCsharp.Form1.resources
+C:\Users\dkoshel\Desktop\progi\PainCsharp\obj\Debug\PainCsharp.Form2.resources
+C:\Users\dkoshel\Desktop\progi\PainCsharp\obj\Debug\PainCsharp.Properties.Resources.resources
+C:\Users\dkoshel\Desktop\progi\PainCsharp\obj\Debug\PainCsharp.csproj.GenerateResource.cache
+C:\Users\dkoshel\Desktop\progi\PainCsharp\obj\Debug\PainCsharp.csproj.CoreCompileInputs.cache
+C:\Users\dkoshel\Desktop\progi\PainCsharp\obj\Debug\PainCsharp.exe
+C:\Users\dkoshel\Desktop\progi\PainCsharp\obj\Debug\PainCsharp.pdb
+F:\Нужно сдать\ВАСИН\PainCsharp\bin\Debug\PainCsharp.exe.config
+F:\Нужно сдать\ВАСИН\PainCsharp\bin\Debug\PainCsharp.exe
+F:\Нужно сдать\ВАСИН\PainCsharp\bin\Debug\PainCsharp.pdb
+F:\Нужно сдать\ВАСИН\PainCsharp\obj\Debug\PainCsharp.csprojAssemblyReference.cache
+F:\Нужно сдать\ВАСИН\PainCsharp\obj\Debug\PainCsharp.Form1.resources
+F:\Нужно сдать\ВАСИН\PainCsharp\obj\Debug\PainCsharp.Form2.resources
+F:\Нужно сдать\ВАСИН\PainCsharp\obj\Debug\PainCsharp.Properties.Resources.resources
+F:\Нужно сдать\ВАСИН\PainCsharp\obj\Debug\PainCsharp.csproj.GenerateResource.cache
+F:\Нужно сдать\ВАСИН\PainCsharp\obj\Debug\PainCsharp.csproj.CoreCompileInputs.cache
+F:\Нужно сдать\ВАСИН\PainCsharp\obj\Debug\PainCsharp.exe
+F:\Нужно сдать\ВАСИН\PainCsharp\obj\Debug\PainCsharp.pdb
+C:\Users\Скит\Desktop\csp\bin\Debug\PainCsharp.exe.config
+C:\Users\Скит\Desktop\csp\bin\Debug\PainCsharp.exe
+C:\Users\Скит\Desktop\csp\bin\Debug\PainCsharp.pdb
+C:\Users\Скит\Desktop\csp\obj\Debug\PainCsharp.csprojAssemblyReference.cache
+C:\Users\Скит\Desktop\csp\obj\Debug\PainCsharp.Form1.resources
+C:\Users\Скит\Desktop\csp\obj\Debug\PainCsharp.Form2.resources
+C:\Users\Скит\Desktop\csp\obj\Debug\PainCsharp.Properties.Resources.resources
+C:\Users\Скит\Desktop\csp\obj\Debug\PainCsharp.csproj.GenerateResource.cache
+C:\Users\Скит\Desktop\csp\obj\Debug\PainCsharp.csproj.CoreCompileInputs.cache
+C:\Users\Скит\Desktop\csp\obj\Debug\PainCsharp.exe
+C:\Users\Скит\Desktop\csp\obj\Debug\PainCsharp.pdb
+C:\Users\dkoshel\Desktop\csp\bin\Debug\PainCsharp.exe.config
+C:\Users\dkoshel\Desktop\csp\bin\Debug\PainCsharp.exe
+C:\Users\dkoshel\Desktop\csp\bin\Debug\PainCsharp.pdb
+C:\Users\dkoshel\Desktop\csp\obj\Debug\PainCsharp.Form1.resources
+C:\Users\dkoshel\Desktop\csp\obj\Debug\PainCsharp.Form2.resources
+C:\Users\dkoshel\Desktop\csp\obj\Debug\PainCsharp.Properties.Resources.resources
+C:\Users\dkoshel\Desktop\csp\obj\Debug\PainCsharp.csproj.GenerateResource.cache
+C:\Users\dkoshel\Desktop\csp\obj\Debug\PainCsharp.csproj.CoreCompileInputs.cache
+C:\Users\dkoshel\Desktop\csp\obj\Debug\PainCsharp.exe
+C:\Users\dkoshel\Desktop\csp\obj\Debug\PainCsharp.pdb
+C:\Users\dkoshel\Desktop\csp\obj\Debug\PainCsharp.csprojAssemblyReference.cache
