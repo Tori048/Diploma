@@ -53,3 +53,14 @@ C:\Users\dkoshel\Desktop\csp\obj\Debug\PainCsharp.csproj.CoreCompileInputs.cache
 C:\Users\dkoshel\Desktop\csp\obj\Debug\PainCsharp.exe
 C:\Users\dkoshel\Desktop\csp\obj\Debug\PainCsharp.pdb
 C:\Users\dkoshel\Desktop\csp\obj\Debug\PainCsharp.csprojAssemblyReference.cache
+C:\Users\Скит\Source\Repos\Diploma\bin\Debug\PainCsharp.exe.config
+C:\Users\Скит\Source\Repos\Diploma\bin\Debug\PainCsharp.exe
+C:\Users\Скит\Source\Repos\Diploma\bin\Debug\PainCsharp.pdb
+C:\Users\Скит\Source\Repos\Diploma\obj\Debug\PainCsharp.csprojAssemblyReference.cache
+C:\Users\Скит\Source\Repos\Diploma\obj\Debug\PainCsharp.Form1.resources
+C:\Users\Скит\Source\Repos\Diploma\obj\Debug\PainCsharp.Form2.resources
+C:\Users\Скит\Source\Repos\Diploma\obj\Debug\PainCsharp.Properties.Resources.resources
+C:\Users\Скит\Source\Repos\Diploma\obj\Debug\PainCsharp.csproj.GenerateResource.cache
+C:\Users\Скит\Source\Repos\Diploma\obj\Debug\PainCsharp.csproj.CoreCompileInputs.cache
+C:\Users\Скит\Source\Repos\Diploma\obj\Debug\PainCsharp.exe
+C:\Users\Скит\Source\Repos\Diploma\obj\Debug\PainCsharp.pdb

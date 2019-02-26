@@ -13,9 +13,9 @@ namespace PainCsharp
 {
     public partial class Form1 : Form
     {
-        private ColumgAndString CAS = null;
-        private int numberOfImage = 10;
-        private int numberOfImage2 = 10;
+        private ColumgAndString CAS = new ColumgAndString();
+        private int numberOfImage = 0;
+        private int numberOfImage2 = 0;
         public int NumberOfImage
         {
             get
@@ -473,7 +473,7 @@ namespace PainCsharp
             //закидываем в новые битмапы все изображения по порядку
             foreach (string i in OpenManyImageForFirstStep.FileNames)
             {
-                files.Add(Image.FromFile(OpenManyImageForFirstStep.FileNames[j]));
+                files2.Add(Image.FromFile(OpenManyImageForFirstStep.FileNames[j]));
                 BitImage.Add(new Bitmap(files2[j]));
                 j++;
             }
@@ -481,16 +481,11 @@ namespace PainCsharp
 
             // закнончили закидывать и выбирать
 
-
-
-
-
-
-            if (NumberOfImage > 1)
+            if (NumberOfImage2 > 1)
             {
-                Color color;
-                List<Byte> file_proba = new List<Byte>();
-                int i = 1;
+             //   Color color;
+             //   List<Byte> file_proba = new List<Byte>();
+                int i = BitImage.Count-1;
                 //проверяем, что размеры у всех фото одинаковы
                 foreach (Bitmap im in BitImage)
                 {
@@ -500,58 +495,62 @@ namespace PainCsharp
                         MessageBox.Show("Карамба!!! У изображений разные размеры!");
                         return;
                     }
-                    if (i < NumberOfImage - 1)
-                        i++;
+                        i--;
+                    if (i == 0)
+                        break;
                 }
                 i = 0;
-                int Width = BitImage[1].Width; //ширина
-                int Height = BitImage[1].Height; //высота
-                progressBarConvertToTxt.Visible = true;
-                progressBarConvertToTxt.Maximum = Width * Height * BitImage.Count();
-                for (int number = 0; number < NumberOfImage; number++)
-                {
-                    for (int y = 0; y < Height; y++)
-                    {
-                        for (int x = 0; x < Width; x++)
-                        {
-                                color = BitImage[number].GetPixel(x, y);
-                                file_proba.Add(color.R);
-                                file_proba.Add(color.G);
-                                file_proba.Add(color.B);
-                               // i++;
-                        }
-                       
-                        // Application.DoEvents();
-                    }
-                    i++;
-                    progressBarConvertToTxt.Value = i;
-                    progressConvertToTxt.Text = "Изображений обработано: " + i.ToString();
-                    string name = numberOfImage.ToString()+" im" + ".txt";
-                    File.WriteAllBytes(name, file_proba.ToArray());
-                }
-                progressConvertToTxt.Visible = false;
-                progressBarConvertToTxt.Visible = false;
-                //string name = numberOfImage.ToString() + ".txt";
-                //File.WriteAllBytes(name, file_proba.ToArray());
-                MessageBox.Show("Готово");
+                //int Width = BitImage[1].Width; //ширина
+                //int Height = BitImage[1].Height; //высота
+                //progressBarConvertToTxt.Visible = true;
+                //progressBarConvertToTxt.Maximum = Width * Height * BitImage.Count();
+                //for (int number = 0; number < NumberOfImage2; number++)
+                //{
+                //    for (int y = 0; y < Height; y++)
+                //    {
+                //        for (int x = 0; x < Width; x++)
+                //        {
+                //                color = BitImage[number].GetPixel(x, y);
+                //                file_proba.Add(color.R);
+                //                file_proba.Add(color.G);
+                //                file_proba.Add(color.B);
+                //               // i++;
+                //        }
+                //    }
+                //    i++;
+                //    progressBarConvertToTxt.Value = i;
+                //    progressConvertToTxt.Text = "Изображений обработано: " + i.ToString();
+                //    string name = numberOfImage2.ToString()+" im" + ".txt";
+                //    File.WriteAllBytes(name, file_proba.ToArray());
+                //    Application.DoEvents();
+                //}
+                //progressConvertToTxt.Visible = false;
+                //progressBarConvertToTxt.Visible = false;
+                ////string name = numberOfImage.ToString() + ".txt";
+                ////File.WriteAllBytes(name, file_proba.ToArray());
+                
+                //MessageBox.Show("Готово");
 
             } //END sizeMainLists > 0
-
-
+            else
+            {
+                MessageBox.Show("Количество изображений нужно увеличить");
+            }
+            CAS.bar = progressBarConvertToTxt;
 
             switch (int.Parse(comboBox3.Text))
             {
                 case 1:
-                    CAS.ColumnEze(files2);
+                    CAS.ColumnEze(BitImage);
                     break;
                 case 2:
-                    CAS.ColumnZmey(files2);
+                    CAS.ColumnZmey(BitImage);
                     break;
                 case 3:
-                    CAS.StringEze(files2);
+                    CAS.StringEze(BitImage);
                     break;
                 case 4:
-                    CAS.StringZmey(files2);
+                    CAS.StringZmey(BitImage);
                     break;
                 default:
                     MessageBox.Show("Что-то не так с выбранным числом в комбобоксе №3");
