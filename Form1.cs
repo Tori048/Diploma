@@ -440,6 +440,7 @@ namespace PainCsharp
           //      numberOfImage = 50;
             try
             {
+                numberOfImage = 50;
                 Form2 f = new Form2(int.Parse(Pixel_number.Text), numberOfImage,this);
                 f.Show();
             }
@@ -537,20 +538,24 @@ namespace PainCsharp
                 MessageBox.Show("Количество изображений нужно увеличить");
             }
             CAS.bar = progressBarConvertToTxt;
-
+            progressConvertToTxt.Visible = false;
             switch (int.Parse(comboBox3.Text))
             {
                 case 1:
                     CAS.ColumnEze(BitImage);
+                    BitImage.Clear();
                     break;
                 case 2:
                     CAS.ColumnZmey(BitImage);
+                    BitImage.Clear();
                     break;
                 case 3:
                     CAS.StringEze(BitImage);
+                    BitImage.Clear();
                     break;
                 case 4:
                     CAS.StringZmey(BitImage);
+                    BitImage.Clear();
                     break;
                 default:
                     MessageBox.Show("Что-то не так с выбранным числом в комбобоксе №3");

@@ -42,10 +42,7 @@ namespace PainCsharp
             Pen RedPen = new Pen(Color.Red, 1);
             Pen GreenPen = new Pen(Color.Green, 0.01f);
             Pen BluePen = new Pen(Color.Blue, 0.01f);
-          
-            int w = 320, h = 1200;
-           
-                
+            int w = 320, h = 1200;             
                 int start=0;//номер байта, с которого начнём отсчёт пикселя
                 int end=0;//номер байта, на котором закончится пиксель
                 if(pixel==0)//для первого пикселя
