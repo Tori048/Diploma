@@ -542,15 +542,19 @@ namespace PainCsharp
             {
                 case 1:
                     CAS.ColumnEze(BitImage);
+                    BitImage.Clear();
                     break;
                 case 2:
                     CAS.ColumnZmey(BitImage);
+                    BitImage.Clear();
                     break;
                 case 3:
                     CAS.StringEze(BitImage);
+                    BitImage.Clear();
                     break;
                 case 4:
                     CAS.StringZmey(BitImage);
+                    BitImage.Clear();
                     break;
                 default:
                     MessageBox.Show("Что-то не так с выбранным числом в комбобоксе №3");
