@@ -232,7 +232,7 @@ namespace PainCsharp
         }
         private void button4_Click(object sender, EventArgs e)
         {
-            
+
             List<byte> file1 = new List<byte>();
             int w = 320, h = 1200;
             Bitmap im = new Bitmap(w, h);
@@ -247,16 +247,21 @@ namespace PainCsharp
                     NumberOfImage = NameToNumber(s, numberOfImage);
                 }
                 //x,y - координаты для пикселей в файле
-                for (int y = 0, x = 0; y < h; y++)
+                for (int y = 0; y < h; y++)
                 {//xx - координаты для изображения, которое строим
-                    for (int xx = 0; xx<320; xx++)
+                    for (int xx = 0; xx < 320; xx++)
                     {
-                        int r = Convert.ToInt32(file1[x]);
-                        int g = Convert.ToInt32(file1[x + 1]);
-                        int b = Convert.ToInt32(file1[x + 2]);
+                        int r = Convert.ToInt32(file1[xx]);
+                        int g = r;
+                        int b = r;
                         color = Color.FromArgb(r, g, b);
                         im.SetPixel(xx, y, color);
-                        x += 3*NumberOfImage;
+                        //int r = Convert.ToInt32(file1[x]);
+                        //int g = Convert.ToInt32(file1[x + 1]);
+                        //int b = Convert.ToInt32(file1[x + 2]);
+                        //color = Color.FromArgb(r, g, b);
+                        //im.SetPixel(xx, y, color);
+                        //x += 3*NumberOfImage;
                     }
                 }
                 pictureBox1.Image = im;
@@ -325,15 +330,15 @@ namespace PainCsharp
             //{
             //    MessageBox.Show("Выбранный текстбокс[" + comboBox2.Text + "], выбранный файл " + openFileDialog3.FileName + "\nЧто то из этого точно не в порядке");
             //}
-            if (int.Parse(comboBox2.Text) == 1)
-            {
-                saveFileDialog1.Filter = "Image Files(*.BMP)|*.BMP|Image Files(*.JPG)|*.JPG|Image Files(*.GIF)|*.GIF|Image Files(*.PNG)|*.PNG|All files (*.*)|*.*";
-                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    pictureBox1.Image.Save(saveFileDialog1.FileName);
-                }
-                MessageBox.Show("Файл сохранен " + pictureBox1.Image);
-            }
+            //if (int.Parse(comboBox2.Text) == 1)
+            //{
+            //    saveFileDialog1.Filter = "Image Files(*.BMP)|*.BMP|Image Files(*.JPG)|*.JPG|Image Files(*.GIF)|*.GIF|Image Files(*.PNG)|*.PNG|All files (*.*)|*.*";
+            //    if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            //    {
+            //        pictureBox1.Image.Save(saveFileDialog1.FileName);
+            //    }
+            //    MessageBox.Show("Файл сохранен " + pictureBox1.Image);
+            //}
         }
 
 
@@ -560,6 +565,11 @@ namespace PainCsharp
                     MessageBox.Show("Что-то не так с выбранным числом в комбобоксе №3");
                     break;
             }
+        }
+
+        private void Matrix_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

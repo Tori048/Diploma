@@ -59,6 +59,7 @@
             this.comboBox3 = new System.Windows.Forms.ComboBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.OpenManyImageForFirstStep = new System.Windows.Forms.OpenFileDialog();
+            this.Matrix = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -318,11 +319,22 @@
             this.OpenManyImageForFirstStep.FileName = "openFileDialog5";
             this.OpenManyImageForFirstStep.Multiselect = true;
             // 
+            // Matrix
+            // 
+            this.Matrix.Location = new System.Drawing.Point(669, 280);
+            this.Matrix.Name = "Matrix";
+            this.Matrix.Size = new System.Drawing.Size(186, 23);
+            this.Matrix.TabIndex = 24;
+            this.Matrix.Text = "Построить матрицы ковариаций";
+            this.Matrix.UseVisualStyleBackColor = true;
+            this.Matrix.Click += new System.EventHandler(this.Matrix_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(967, 713);
+            this.Controls.Add(this.Matrix);
             this.Controls.Add(this.comboBox3);
             this.Controls.Add(this.button9);
             this.Controls.Add(this.Pixel_number);
@@ -389,6 +401,7 @@
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.ComboBox comboBox3;
         private System.Windows.Forms.OpenFileDialog OpenManyImageForFirstStep;
+        private System.Windows.Forms.Button Matrix;
     }
 }
 
