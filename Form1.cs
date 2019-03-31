@@ -230,13 +230,14 @@ namespace PainCsharp
             NumOfImage = int.Parse(s);
             return NumOfImage;
         }
-        private void button4_Click(object sender, EventArgs e)
+        private void button4_Click(object sender, EventArgs e)      //сработает для COLUMNEZE       
         {
-            
+
             List<byte> file1 = new List<byte>();
             int w = 320, h = 1200;
             Bitmap im = new Bitmap(w, h);
             Color color;
+            int n = 0;
             if (openFileDialog3.ShowDialog() == DialogResult.OK)
             {
                 file1 = File.ReadAllBytes(openFileDialog3.FileName).ToList();
@@ -247,92 +248,25 @@ namespace PainCsharp
                     NumberOfImage = NameToNumber(s, numberOfImage);
                 }
                 //x,y - координаты для пикселей в файле
-                for (int y = 0, x = 0; y < h; y++)
+                for (int y = 0; y < h; y++)
                 {//xx - координаты для изображения, которое строим
-                    for (int xx = 0; xx<320; xx++)
+                    for (int xx = 0; xx < 320; xx++,n++)
                     {
-                        int r = Convert.ToInt32(file1[x]);
-                        int g = Convert.ToInt32(file1[x + 1]);
-                        int b = Convert.ToInt32(file1[x + 2]);
+                        byte r = file1[n];
+                        byte g = r;
+                        byte b = r;
                         color = Color.FromArgb(r, g, b);
                         im.SetPixel(xx, y, color);
-                        x += 3*NumberOfImage;
+                        if (xx == 0 && y > 1190)
+                        {
+
+                        }
                     }
                 }
-                pictureBox1.Image = im;
-            }
-            //try
-            //{
-            //    if (int.Parse(comboBox2.Text) == 1)
-            //    {
-            //        List<string> file = new List<string>();
-            //        if (openFileDialog3.ShowDialog() == DialogResult.OK)
-            //        {
-            //            file = File.ReadAllLines(openFileDialog3.FileName).ToList();
-            //            if (file.Count() < 1) return; //Файл пустой!
-            //            var width = file[0].Split(' ').Count() - 1; //В конце строки у нас есть дополнительный пробел!
-            //            var heigh = file.Count;
-
-            //            Bitmap b2 = new Bitmap(width, heigh);
-            //            string[] s;
-            //            for (var y = 0; y < heigh; y++)
-            //            {
-            //                s = file[y].TrimEnd(' ').Split(' ');
-            //                for (var x = 0; x < width; x++)
-            //                {
-            //                    var i = int.Parse(s[x]);
-            //                    Color pixel = new Color();
-            //                    pixel = Color.FromArgb(i);
-            //                    b2.SetPixel(x, y, pixel);
-
-            //                }
-            //            }
-            //            pictureBox1.Image = b2;
-            //            label1.Text = null;
-            //            label1.Text = "Разрешение изображения: " + label1.Text + pictureBox1.Image.Width.ToString() + "x" + pictureBox1.Image.Height.ToString();
-            //        }
-            //    }
-            //    else if (int.Parse(comboBox2.Text) == 2)
-            //    {
-            //        List<string> file = new List<string>();
-            //        if (openFileDialog3.ShowDialog() == DialogResult.OK)
-            //        {
-            //            file = File.ReadAllLines(openFileDialog3.FileName).ToList();
-            //            if (file.Count() < 1) return; //Файл пустой!
-            //            var width = file[0].Split(' ').Count() - 1; //В конце строки у нас есть дополнительный пробел!
-            //            var heigh = file.Count;
-
-            //            Bitmap b2 = new Bitmap(width, heigh);
-            //            string[] s;
-            //            for (var y = 0; y < heigh; y++)
-            //            {
-            //                s = file[y].TrimEnd(' ').Split(' ');
-            //                for (var x = 0; x < width; x++)
-            //                {
-            //                    var i = int.Parse(s[x]);
-            //                    Color pixel = new Color();
-            //                    pixel = Color.FromArgb(i);
-            //                    b2.SetPixel(x, y, pixel);
-            //                }
-            //            }
-            //            pictureBox2.Image = b2;
-            //            label2.Text = null;
-            //            label2.Text = "Разрешение изображения: " + label2.Text + pictureBox2.Image.Width.ToString() + "x" + pictureBox2.Image.Height.ToString();
-            //        }
-            //    }
-            //}
-            //catch (FormatException)
-            //{
-            //    MessageBox.Show("Выбранный текстбокс[" + comboBox2.Text + "], выбранный файл " + openFileDialog3.FileName + "\nЧто то из этого точно не в порядке");
-            //}
-            if (int.Parse(comboBox2.Text) == 1)
-            {
-                saveFileDialog1.Filter = "Image Files(*.BMP)|*.BMP|Image Files(*.JPG)|*.JPG|Image Files(*.GIF)|*.GIF|Image Files(*.PNG)|*.PNG|All files (*.*)|*.*";
-                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    pictureBox1.Image.Save(saveFileDialog1.FileName);
-                }
-                MessageBox.Show("Файл сохранен " + pictureBox1.Image);
+                if (int.Parse(comboBox2.Text) == 1)
+                    pictureBox1.Image = im;
+                if (int.Parse(comboBox2.Text) == 2)
+                    pictureBox2.Image = im;
             }
         }
 
@@ -562,5 +496,90 @@ namespace PainCsharp
                     break;
             }
         }
+
+        private static double[,] CalcCorr(double[,] vals, double[] means, int m, int n)
+        {
+            double[,] corr = new double[m, m];
+
+            for (int i = 0; i < m; i++)
+                for (int j = i; j < m; j++)
+                {
+                    double sum = 0;
+
+                    for (int k = 0; k < n; k++)
+                        sum += ((vals[k, i] - means[i]) * (vals[k, j] - means[j]));
+
+                    corr[i, j] = corr[j, i] = sum / (n - 1);
+                 //   MessageBox.Show(corr[i, j].ToString());
+                }
+
+            return corr;
+        }
+
+
+        private void Matrix_Click(object sender, EventArgs e)
+        {
+            const int n = 3;
+            double sr_z = 0;
+            double[] srednznach = new double[n];
+            double[] dispmatr = new double[n];
+            double[,] nums = new double[n, n] //исходная матрица 
+            {   { 5, 4, 2 },
+                { 0, 1, 6 },
+                { 4, 9, 3 }
+            };
+            double[,] MatrixK = new double[n, n];
+
+            for (int j = 0; j < n; j++) //среднее значение для каждого столбца
+            {
+                double sum = 0;
+                for (int i = 0; i < n; i++)
+                {
+                    sum += nums[i, j]; //сумма эл-тов
+                    sr_z = sum / n; // (сумма/числострок)
+                    srednznach[j] = sr_z;
+                }
+                //MessageBox.Show(srednznach[j].ToString());
+            }
+            //дисперсия
+            for (int j = 0; j < n; j++)
+            {
+                double nedodispersia = 0, dispersia = 0;
+                for (int i = 0; i < n; i++)
+                {
+                    nedodispersia += System.Math.Pow((nums[i, j] - srednznach[j]), 2);
+                }
+                dispersia = nedodispersia / (n-1);
+                //dispersia = Math.Round(dispersia);
+                dispmatr[j] = dispersia;
+                MessageBox.Show(dispmatr[j] + " \t");
+            }
+
+            //захуярили корреляционную матрицу
+            double[,] korrel = new double[n, n];
+            korrel = CalcCorr(nums, srednznach, n, n);
+
+            for (int j = 0; j < n; j++)
+            {
+                for (int i = 0; i < n; i++)
+                {
+                    MessageBox.Show(korrel[i, j].ToString()+"  lll   ");
+                }
+            }
+
+            // из коРРЕЛЯЦИОННОй захуярили коВАРИАЦИООНУЮ
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    MatrixK[i,j] = korrel[i,j] * Math.Sqrt(korrel[i,i] * korrel[j,j]);
+                    MessageBox.Show(MatrixK[i, j].ToString() + "  000   ");
+                }
+            }
+          
+
+        }
     }
 }
+
+//TODO: сделай матрицу КОВАРИАЦИЙ треугольной, найди собственные вектора и собственные числа
