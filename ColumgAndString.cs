@@ -11,7 +11,7 @@ namespace PainCsharp
 {
     class ColumgAndString
     {
-       public ProgressBar bar;
+        public ProgressBar bar;
         private List<Byte> fileForColorByte = new List<Byte>();
         private bool Mono = true;
 

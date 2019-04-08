@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 
+
 namespace PainCsharp
 {
     public partial class Form1 : Form
@@ -496,90 +497,212 @@ namespace PainCsharp
                     break;
             }
         }
+        /* функция для расчёта корреляционной матрицы
+         * Входные параметры:
+         * double[,] nums - исходная матрица
+         * double[] means - среднии значения столбцов исходной матрицы
+         * int n - размерность исходной матрицы
+         * Возвращаемое значение:
+         * double [,] corr - корреляционная матрица
+         */
 
-        private static double[,] CalcCorr(double[,] vals, double[] means, int m, int n)
+        private static double[,] GetCovarMatrix(double[,] nums, double[] means, int n)
         {
-            double[,] corr = new double[m, m];
+            double[,] corr = new double[n, n];
 
-            for (int i = 0; i < m; i++)
-                for (int j = i; j < m; j++)
+            for (int i = 0; i < n; i++)
+                for (int j = i; j < n; j++)
                 {
                     double sum = 0;
-
                     for (int k = 0; k < n; k++)
-                        sum += ((vals[k, i] - means[i]) * (vals[k, j] - means[j]));
-
+                        sum += ((nums[k, i] - means[i]) * (nums[k, j] - means[j]));
                     corr[i, j] = corr[j, i] = sum / (n - 1);
-                 //   MessageBox.Show(corr[i, j].ToString());
                 }
-
             return corr;
         }
 
 
         private void Matrix_Click(object sender, EventArgs e)
         {
-            const int n = 3;
-            double sr_z = 0;
-            double[] srednznach = new double[n];
-            double[] dispmatr = new double[n];
-            double[,] nums = new double[n, n] //исходная матрица 
-            {   { 5, 4, 2 },
-                { 0, 1, 6 },
-                { 4, 9, 3 }
+            /* так как пока не пробовал это на нормальных данных, задаю всё "топорно"*/
+            const int n = 3;                           // размерность матрицы
+            double mean = 0;                           //среднее значение
+            double[] meanMass = new double[n];         //массив для средних значений == вектор средних
+            double[] dispmatr = new double[n];         //массив для дисперсий
+            double[,] nums = new double[n, n]          //исходная матрица 
+            {   { 3, 1, 2},
+                { 4, 6, 5},
+                { 7, 9, 8}
             };
-            double[,] MatrixK = new double[n, n];
+            double[,] correlation = new double[n, n];   //Корреляционная матрица
+            double[,] MatrixK = new double[n, n];       //ковариационная матрица
 
-            for (int j = 0; j < n; j++) //среднее значение для каждого столбца
+            /* получение среднего значения для каждого столбца */
+            for (int j = 0; j < n; j++) 
             {
                 double sum = 0;
                 for (int i = 0; i < n; i++)
                 {
-                    sum += nums[i, j]; //сумма эл-тов
-                    sr_z = sum / n; // (сумма/числострок)
-                    srednznach[j] = sr_z;
+                    sum += nums[i, j]; 
+                    mean = sum / n;
+                    meanMass[j] = mean;
                 }
-                //MessageBox.Show(srednznach[j].ToString());
-            }
-            //дисперсия
-            for (int j = 0; j < n; j++)
-            {
-                double nedodispersia = 0, dispersia = 0;
-                for (int i = 0; i < n; i++)
-                {
-                    nedodispersia += System.Math.Pow((nums[i, j] - srednznach[j]), 2);
-                }
-                dispersia = nedodispersia / (n-1);
-                //dispersia = Math.Round(dispersia);
-                dispmatr[j] = dispersia;
-                MessageBox.Show(dispmatr[j] + " \t");
             }
 
-            //захуярили корреляционную матрицу
-            double[,] korrel = new double[n, n];
-            korrel = CalcCorr(nums, srednznach, n, n);
+            /*РАСЧЁТ ДИСПЕРСИИ*/
 
             for (int j = 0; j < n; j++)
             {
+                double semiDispersion = 0,
+                       dispersion = 0; //дисперсия для 
                 for (int i = 0; i < n; i++)
                 {
-                    MessageBox.Show(korrel[i, j].ToString()+"  lll   ");
+                    semiDispersion += Math.Pow((nums[i, j] - meanMass[j]), 2);
                 }
+                dispersion = semiDispersion / (n-1);
+                dispmatr[j] = dispersion;
+            }
+            // вывод дисперсии в файл:
+            StreamWriter file = new StreamWriter("Results.txt");
+            file.WriteLine("Дисперсии:");
+            for (int i = 0; i < n; i++)
+            {
+                file.WriteLine(dispmatr[i]);
             }
 
-            // из коРРЕЛЯЦИОННОй захуярили коВАРИАЦИООНУЮ
+            /* Похоже на КОВАРИАЦИОННУЮ МАТРИЦУ, А НЕ КОРРЕЛЯЦИОННУЮ */
+            file.WriteLine("Ковариационная матрица:");
+            // Получение ковариационной матрицы
+            MatrixK = GetCovarMatrix(nums, meanMass, n);
             for (int i = 0; i < n; i++)
             {
                 for (int j = 0; j < n; j++)
                 {
-                    MatrixK[i,j] = korrel[i,j] * Math.Sqrt(korrel[i,i] * korrel[j,j]);
-                    MessageBox.Show(MatrixK[i, j].ToString() + "  000   ");
+                    file.Write(MatrixK[i, j] + " ");
                 }
+                file.WriteLine();
             }
-          
+            /*
+            // получение ковариационной матрицы из корреляционной
+            file.WriteLine("Ковариационная матрица:");
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    MatrixK[i,j] = correlation[i,j] * Math.Sqrt(correlation[i,i] * correlation[j,j]);
+                    file.Write(MatrixK[i, j] + " ");
+                    //MessageBox.Show(MatrixK[i, j] + " a[" + i.ToString() + "][" + j.ToString() + "] ");
+                }
+                file.WriteLine();
+            }*/
+         //   CalcOwnValue(MatrixK, dispmatr, n);
+            file.Close();
 
         }
+        //TODO: сделай матрицу КОВАРИАЦИЙ треугольной, найди собственные вектора и собственные числа
+        /* поиск собственных значений
+         * Входные параметры:
+         * double[,] MatrixK - ковариационная матрица
+         * double[] dispmatr -  дисперсии (диаганальные элементы в MatrixK)
+         * int n - размерность ковариационной матрицы
+         */
+
+            /* Метод вращения Якоби */
+    /*    public void CalcOwnValue(double[,] MatrixK, double[] dispmatr, int n)
+        {
+            unsafe
+            {
+                double a = (double)n;
+                int loopNumber = 50; // количество проходов
+                double[,] OwnVectors = new double[n, n];
+                double[] OwnElements = new double[n];
+                double[] b = new double[n + n];
+                double* z = (b + a);
+                for (int i = 0; i < n; i++)
+                {
+                    z[i] = 0;
+                    b[i] = OwnElements[i] = MatrixK[i, i];
+                    for (int j = 0; j < n; j++)
+                    {
+                        if (i == j)
+                            OwnVectors[i, j] = 1;
+                        else
+                            OwnVectors[i, j] = 0;
+                    }
+                }
+                for (int i = 0; i < loopNumber; i++)
+                {
+                    double sm = 0;
+                    for (int p = 0; p < n - 1; p++)
+                    {
+                        for (int q = p + 1; q < n; q++)
+                        {
+                            sm += Math.Abs(MatrixK[p, q]);
+                        }
+                    }
+                    if (sm == 0) break;
+                    double tresh = i < 3 ? 0.2 * sm / (n * n) : 0;
+                    for (int p = 0; p < n - 1; p++)
+                    {
+                        for (int q = p + 1; q < n; q++)
+                        {
+                            double g = 1e12 * Math.Abs(MatrixK[p, q]);
+                            if (i >= 3 && Math.Abs(OwnElements[p]) > g && Math.Abs(OwnElements[q]) > g) MatrixK[p, q] = 0;
+                            else
+                            if (Math.Abs(MatrixK[p, q]) > tresh)
+                            {
+                                double theta = 0.5 * (OwnElements[q] - OwnElements[p]) / MatrixK[p, q];
+                                double t = 1 / (Math.Abs(theta) + Math.Sqrt(1 + theta * theta));
+                                if (theta < 0) t = -t;
+                                double c = 1 / Math.Sqrt(1 + t * t);
+                                double s = t * c;
+                                double tau = s / (1 + c);
+                                double h = t * MatrixK[p, q];
+                                z[p] -= h;
+                                z[q] += h;
+                                OwnElements[p] -= h;
+                                OwnElements[q] += h;
+                                MatrixK[p, q] = 0;
+                                for (int j = 0; j < p; j++)
+                                {
+                                    double g1 = MatrixK[j, p];
+                                    double h1 = MatrixK[j, q];
+                                    MatrixK[j, p] = g1 - s * (h1 + g1 * tau);
+                                    MatrixK[j, q] = h1 + s * (g1 - h1 * tau);
+                                }
+                                for (int j = p + 1; j < q; j++)
+                                {
+                                    double g1 = MatrixK[p, j];
+                                    double h1 = MatrixK[j, q];
+                                    MatrixK[p, j] = g1 - s * (h1 + g1 * tau);
+                                    MatrixK[j, q] = h1 + s * (g1 - h1 * tau);
+                                }
+                                for (int j = q + 1; j < n; j++)
+                                {
+                                    double g1 = MatrixK[p, j];
+                                    double h1 = MatrixK[q, j];
+                                    MatrixK[p, j] = g1 - s * (h1 + g1 * tau);
+                                    MatrixK[q, j] = h1 + s * (g1 - h1 * tau);
+                                }
+                                for (int j = 0; j < n; j++)
+                                {
+                                    double g1 = OwnVectors[j, p];
+                                    double h1 = OwnVectors[j, q];
+                                    OwnVectors[j, p] = g1 - s * (h1 + g1 * tau);
+                                    OwnVectors[j, q] = h1 + s * (g1 - h1 * tau);
+                                }
+                            }
+                        }
+                    }
+                    for (int p = 0; p < n; p++)
+                    {
+                        OwnElements[p] = (b[p] += z[p]);
+                        z[p] = 0;
+                    }
+                }
+            }
+        }*/
+
     }
 }
 
-//TODO: сделай матрицу КОВАРИАЦИЙ треугольной, найди собственные вектора и собственные числа
