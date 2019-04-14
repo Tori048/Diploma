@@ -8,12 +8,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
-
+using System.Runtime.InteropServices;
 
 namespace PainCsharp
 {
     public partial class Form1 : Form
     {
+        
+      //  public static extern int Vvod(int parm, int parm2);
         private ColumgAndString CAS = new ColumgAndString();
         private int numberOfImage = 0;
         private int numberOfImage2 = 0;
@@ -524,6 +526,7 @@ namespace PainCsharp
 
         private void Matrix_Click(object sender, EventArgs e)
         {
+           // MessageBox.Show("Парм, который ты добавил: {0}", parm3.ToString());
             /* так как пока не пробовал это на нормальных данных, задаю всё "топорно"*/
             const int n = 3;                           // размерность матрицы
             double mean = 0;                           //среднее значение
@@ -534,8 +537,9 @@ namespace PainCsharp
                 { 4, 6, 5},
                 { 7, 9, 8}
             };
-            double[,] correlation = new double[n, n];   //Корреляционная матрица
+          //  double[,] correlation = new double[n, n];   //Корреляционная матрица
             double[,] MatrixK = new double[n, n];       //ковариационная матрица
+            Rotation MatrixForRot = new Rotation();     // Для расчёта собственных значений и векторов
 
             /* получение среднего значения для каждого столбца */
             for (int j = 0; j < n; j++) 
@@ -595,9 +599,23 @@ namespace PainCsharp
                 }
                 file.WriteLine();
             }*/
-         //   CalcOwnValue(MatrixK, dispmatr, n);
-            file.Close();
+            //   CalcOwnValue(MatrixK, dispmatr, n);
 
+            double[,] MatrixResult = MatrixForRot.RotationMethod(MatrixK, n);
+            file.WriteLine("Собственные значения:");
+            for (int i = 0; i < n; i++)
+            {
+                file.Write(MatrixResult[i, i].ToString("0.000") + " ");
+                file.WriteLine();
+            }
+            file.WriteLine("Собственные вектора:");
+            for (int j = 0; j < n; j++) 
+            {
+                for (int i = 0; i < n; i++)
+                    file.Write(MatrixForRot.MatrixForOwnVectors[i, j].ToString("0.000") + " ");
+                file.WriteLine();
+            }
+            file.Close();
         }
         //TODO: сделай матрицу КОВАРИАЦИЙ треугольной, найди собственные вектора и собственные числа
         /* поиск собственных значений
@@ -608,7 +626,7 @@ namespace PainCsharp
          */
 
             /* Метод вращения Якоби */
-    /*    public void CalcOwnValue(double[,] MatrixK, double[] dispmatr, int n)
+    /*   public void CalcOwnValue(double[,] MatrixK, double[] dispmatr, int n)
         {
             unsafe
             {
