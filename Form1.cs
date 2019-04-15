@@ -210,23 +210,7 @@ namespace PainCsharp
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
-        {
-            if (pictureBox1.Image != null)
-            {
-                Bitmap PictureOne = new Bitmap(pictureBox1.Image);
-                Bitmap barChart = null;
-                barChart = new Bitmap(Histogramma(PictureOne));
-                pictureBox3.Image = barChart;
-            }
-            if (pictureBox2.Image != null)
-            {
-                Bitmap PictureTwo = new Bitmap(pictureBox2.Image);
-                Bitmap barChart2 = null;
-                barChart2 = new Bitmap(Histogramma(PictureTwo));
-                pictureBox4.Image = barChart2;
-            }
-        }
+        
         public int NameToNumber(string s, int NumOfImage)
         {
             s = s.Trim('.', 'b', 'i', 'n');
@@ -539,7 +523,7 @@ namespace PainCsharp
             };
           //  double[,] correlation = new double[n, n];   //Корреляционная матрица
             double[,] MatrixK = new double[n, n];       //ковариационная матрица
-            Rotation MatrixForRot = new Rotation();     // Для расчёта собственных значений и векторов
+            Rotation MatrixForRot = new Rotation(progressBarConvertToTxt, progressConvertToTxt);     // Для расчёта собственных значений и векторов
 
             /* получение среднего значения для каждого столбца */
             for (int j = 0; j < n; j++) 
@@ -617,6 +601,7 @@ namespace PainCsharp
             }
             file.Close();
         }
+
         //TODO: сделай матрицу КОВАРИАЦИЙ треугольной, найди собственные вектора и собственные числа
         /* поиск собственных значений
          * Входные параметры:
@@ -625,101 +610,101 @@ namespace PainCsharp
          * int n - размерность ковариационной матрицы
          */
 
-            /* Метод вращения Якоби */
-    /*   public void CalcOwnValue(double[,] MatrixK, double[] dispmatr, int n)
-        {
-            unsafe
+        /* Метод вращения Якоби */
+        /*   public void CalcOwnValue(double[,] MatrixK, double[] dispmatr, int n)
             {
-                double a = (double)n;
-                int loopNumber = 50; // количество проходов
-                double[,] OwnVectors = new double[n, n];
-                double[] OwnElements = new double[n];
-                double[] b = new double[n + n];
-                double* z = (b + a);
-                for (int i = 0; i < n; i++)
+                unsafe
                 {
-                    z[i] = 0;
-                    b[i] = OwnElements[i] = MatrixK[i, i];
-                    for (int j = 0; j < n; j++)
+                    double a = (double)n;
+                    int loopNumber = 50; // количество проходов
+                    double[,] OwnVectors = new double[n, n];
+                    double[] OwnElements = new double[n];
+                    double[] b = new double[n + n];
+                    double* z = (b + a);
+                    for (int i = 0; i < n; i++)
                     {
-                        if (i == j)
-                            OwnVectors[i, j] = 1;
-                        else
-                            OwnVectors[i, j] = 0;
-                    }
-                }
-                for (int i = 0; i < loopNumber; i++)
-                {
-                    double sm = 0;
-                    for (int p = 0; p < n - 1; p++)
-                    {
-                        for (int q = p + 1; q < n; q++)
+                        z[i] = 0;
+                        b[i] = OwnElements[i] = MatrixK[i, i];
+                        for (int j = 0; j < n; j++)
                         {
-                            sm += Math.Abs(MatrixK[p, q]);
+                            if (i == j)
+                                OwnVectors[i, j] = 1;
+                            else
+                                OwnVectors[i, j] = 0;
                         }
                     }
-                    if (sm == 0) break;
-                    double tresh = i < 3 ? 0.2 * sm / (n * n) : 0;
-                    for (int p = 0; p < n - 1; p++)
+                    for (int i = 0; i < loopNumber; i++)
                     {
-                        for (int q = p + 1; q < n; q++)
+                        double sm = 0;
+                        for (int p = 0; p < n - 1; p++)
                         {
-                            double g = 1e12 * Math.Abs(MatrixK[p, q]);
-                            if (i >= 3 && Math.Abs(OwnElements[p]) > g && Math.Abs(OwnElements[q]) > g) MatrixK[p, q] = 0;
-                            else
-                            if (Math.Abs(MatrixK[p, q]) > tresh)
+                            for (int q = p + 1; q < n; q++)
                             {
-                                double theta = 0.5 * (OwnElements[q] - OwnElements[p]) / MatrixK[p, q];
-                                double t = 1 / (Math.Abs(theta) + Math.Sqrt(1 + theta * theta));
-                                if (theta < 0) t = -t;
-                                double c = 1 / Math.Sqrt(1 + t * t);
-                                double s = t * c;
-                                double tau = s / (1 + c);
-                                double h = t * MatrixK[p, q];
-                                z[p] -= h;
-                                z[q] += h;
-                                OwnElements[p] -= h;
-                                OwnElements[q] += h;
-                                MatrixK[p, q] = 0;
-                                for (int j = 0; j < p; j++)
+                                sm += Math.Abs(MatrixK[p, q]);
+                            }
+                        }
+                        if (sm == 0) break;
+                        double tresh = i < 3 ? 0.2 * sm / (n * n) : 0;
+                        for (int p = 0; p < n - 1; p++)
+                        {
+                            for (int q = p + 1; q < n; q++)
+                            {
+                                double g = 1e12 * Math.Abs(MatrixK[p, q]);
+                                if (i >= 3 && Math.Abs(OwnElements[p]) > g && Math.Abs(OwnElements[q]) > g) MatrixK[p, q] = 0;
+                                else
+                                if (Math.Abs(MatrixK[p, q]) > tresh)
                                 {
-                                    double g1 = MatrixK[j, p];
-                                    double h1 = MatrixK[j, q];
-                                    MatrixK[j, p] = g1 - s * (h1 + g1 * tau);
-                                    MatrixK[j, q] = h1 + s * (g1 - h1 * tau);
-                                }
-                                for (int j = p + 1; j < q; j++)
-                                {
-                                    double g1 = MatrixK[p, j];
-                                    double h1 = MatrixK[j, q];
-                                    MatrixK[p, j] = g1 - s * (h1 + g1 * tau);
-                                    MatrixK[j, q] = h1 + s * (g1 - h1 * tau);
-                                }
-                                for (int j = q + 1; j < n; j++)
-                                {
-                                    double g1 = MatrixK[p, j];
-                                    double h1 = MatrixK[q, j];
-                                    MatrixK[p, j] = g1 - s * (h1 + g1 * tau);
-                                    MatrixK[q, j] = h1 + s * (g1 - h1 * tau);
-                                }
-                                for (int j = 0; j < n; j++)
-                                {
-                                    double g1 = OwnVectors[j, p];
-                                    double h1 = OwnVectors[j, q];
-                                    OwnVectors[j, p] = g1 - s * (h1 + g1 * tau);
-                                    OwnVectors[j, q] = h1 + s * (g1 - h1 * tau);
+                                    double theta = 0.5 * (OwnElements[q] - OwnElements[p]) / MatrixK[p, q];
+                                    double t = 1 / (Math.Abs(theta) + Math.Sqrt(1 + theta * theta));
+                                    if (theta < 0) t = -t;
+                                    double c = 1 / Math.Sqrt(1 + t * t);
+                                    double s = t * c;
+                                    double tau = s / (1 + c);
+                                    double h = t * MatrixK[p, q];
+                                    z[p] -= h;
+                                    z[q] += h;
+                                    OwnElements[p] -= h;
+                                    OwnElements[q] += h;
+                                    MatrixK[p, q] = 0;
+                                    for (int j = 0; j < p; j++)
+                                    {
+                                        double g1 = MatrixK[j, p];
+                                        double h1 = MatrixK[j, q];
+                                        MatrixK[j, p] = g1 - s * (h1 + g1 * tau);
+                                        MatrixK[j, q] = h1 + s * (g1 - h1 * tau);
+                                    }
+                                    for (int j = p + 1; j < q; j++)
+                                    {
+                                        double g1 = MatrixK[p, j];
+                                        double h1 = MatrixK[j, q];
+                                        MatrixK[p, j] = g1 - s * (h1 + g1 * tau);
+                                        MatrixK[j, q] = h1 + s * (g1 - h1 * tau);
+                                    }
+                                    for (int j = q + 1; j < n; j++)
+                                    {
+                                        double g1 = MatrixK[p, j];
+                                        double h1 = MatrixK[q, j];
+                                        MatrixK[p, j] = g1 - s * (h1 + g1 * tau);
+                                        MatrixK[q, j] = h1 + s * (g1 - h1 * tau);
+                                    }
+                                    for (int j = 0; j < n; j++)
+                                    {
+                                        double g1 = OwnVectors[j, p];
+                                        double h1 = OwnVectors[j, q];
+                                        OwnVectors[j, p] = g1 - s * (h1 + g1 * tau);
+                                        OwnVectors[j, q] = h1 + s * (g1 - h1 * tau);
+                                    }
                                 }
                             }
                         }
-                    }
-                    for (int p = 0; p < n; p++)
-                    {
-                        OwnElements[p] = (b[p] += z[p]);
-                        z[p] = 0;
+                        for (int p = 0; p < n; p++)
+                        {
+                            OwnElements[p] = (b[p] += z[p]);
+                            z[p] = 0;
+                        }
                     }
                 }
-            }
-        }*/
+            }*/
 
     }
 }

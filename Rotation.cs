@@ -9,6 +9,11 @@ namespace PainCsharp
 {
     class Rotation
     {
+        public Rotation(ProgressBar bar, Label label)
+        {
+            
+        }
+
         const double eps = 0.001;
         public double[,] MatrixForOwnVectors { get; set; } = new double[3, 3];
         public double[,] Matrix { get; set; } = new double[3, 3];
