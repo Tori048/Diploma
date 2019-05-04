@@ -38,8 +38,8 @@ namespace PainCsharp
             InitializeComponent();
         }
         private List<Image> files = new List<Image>();
-        private List<Image> files2 = new List<Image>();
-        private List<Bitmap> BitImage = new List<Bitmap>();
+        private List<Image> files2 = new List<Image>(); // для выбора кучи изображений
+        private List<Bitmap> BitImage = new List<Bitmap>(); // битмапы с изображениями из files2
 
         
 

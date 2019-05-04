@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
 using System.IO;
 
@@ -14,7 +14,16 @@ namespace PainCsharp
         public ProgressBar bar;
         private List<Byte> fileForColorByte = new List<Byte>();
         private bool Mono = true;
+        private static List<string> SS = new List<string>();
+        private Thread SumBitmaps = new Thread(new ParameterizedThreadStart(SummaOfBitmaps));
 
+        public static void SummaOfBitmaps (Object FileName)
+        {
+            string fileName = (string)FileName;
+            SS.Add(fileName);
+            //File.ReadAllBytes(fileName);
+
+        }
         public void ColumnEze(List<Bitmap> files2)
         {
             Color color;
@@ -52,6 +61,7 @@ namespace PainCsharp
                     }
                     string name = i.ToString() + " ColumnEze.txt";
                     File.WriteAllBytes(name, fileForColorByte.ToArray());
+                    SumBitmaps.Start(name);
                     fileForColorByte.Clear();
                 }
                 else
