@@ -12,20 +12,31 @@ namespace PainCsharp
     class ColumgAndString
     {
         public ProgressBar bar;
+        public Label label;
         private List<Byte> fileForColorByte = new List<Byte>();
         private bool Mono = true;
-        private static List<string> SS = new List<string>();
-        private Thread SumBitmaps = new Thread(new ParameterizedThreadStart(SummaOfBitmaps));
+        // private static List<string> SS = new List<string>();
+        private double[,] AllPictures;
+//        private Thread SumBitmaps = new Thread(new ParameterizedThreadStart(SummaOfBitmaps));
 
-        public static void SummaOfBitmaps (Object FileName)
+        public static void SummaOfBitmaps (List<Byte> list)
         {
-            string fileName = (string)FileName;
-            SS.Add(fileName);
-            //File.ReadAllBytes(fileName);
-
+            /*TODO: напиши закидывание всех изображений в массив AllPictures,
+            возможно его придётся переделать под массив массивов, но хз
+            */
+        }
+        /* Инициализируем лейбл, прогресс бар и массив, в котором будут все изображения*/
+        public void ProgressBarAndLabelAndMasIni(int countIter,int sizeOfMas)
+        {
+            bar.Maximum = countIter;
+            bar.Visible = true;
+            label.Visible = true;
+            label.Text = "Изображений обработанно: ";
+            AllPictures = new double[(countIter/sizeOfMas), sizeOfMas];
         }
         public void ColumnEze(List<Bitmap> files2)
         {
+            ProgressBarAndLabelAndMasIni(files2.Count()* files2[1].Width* files2[1].Height, files2[1].Width * files2[1].Height);
             Color color;
             for (int i = 0; i < files2.Count; i++)
             {
@@ -52,6 +63,7 @@ namespace PainCsharp
                                     Mono = false;
                                     break;
                                 }
+                                bar.Value++;
                             }
                         }
                         else
@@ -59,9 +71,10 @@ namespace PainCsharp
                             break;
                         }
                     }
+                    
                     string name = i.ToString() + " ColumnEze.txt";
                     File.WriteAllBytes(name, fileForColorByte.ToArray());
-                    SumBitmaps.Start(name);
+                    SummaOfBitmaps(fileForColorByte);
                     fileForColorByte.Clear();
                 }
                 else
@@ -70,12 +83,17 @@ namespace PainCsharp
                     MessageBox.Show("Изображение не монохромно, целью были моего создания была работа с монохромными изображениями");
                     break;
                 }
+                label.Text = "Изображений обработанно: " + (i+1).ToString();
+                //Application.DoEvents();
             }
             MessageBox.Show("DONE");
             Mono = true;
+            bar.Visible = false;
+            label.Visible = false;
         }
         public void ColumnZmey(List<Bitmap> files2)
         {
+            ProgressBarAndLabelAndMasIni(files2.Count() * files2[1].Width * files2[1].Height, files2[1].Width * files2[1].Height);
             Color color;
             Byte bright8 = 0;
             for (int i = 0; i < files2.Count; i++)
@@ -123,8 +141,10 @@ namespace PainCsharp
                                         Mono = false;
                                         break;
                                     }
+                                    bar.Value++;
                                 }
                             }
+                            bar.Value++;
                         }
                     }
                     string name = i.ToString() + " ColumnZmey.txt";
@@ -138,12 +158,16 @@ namespace PainCsharp
                     MessageBox.Show("Изображение не монохромно, целью были моего создания была работа с монохромными изображениями");
                     break;
                 }
+                label.Text = "Изображений обработанно: " + (i + 1).ToString();
             }
             MessageBox.Show("DONE");
             Mono = true;
+            bar.Visible = false;
+            label.Visible = false;
         }
         public void StringEze(List<Bitmap> files2)
         {
+            ProgressBarAndLabelAndMasIni(files2.Count() * files2[1].Width * files2[1].Height, files2[1].Width * files2[1].Height);
             Color color;
             Byte bright8 = 0;
             for (int i = 0; i < files2.Count; i++)
@@ -174,6 +198,7 @@ namespace PainCsharp
                                 break;
                             }
                         }
+                        bar.Value++;
                     }
                     string name = i.ToString() + " StringEze.txt";
                     File.WriteAllBytes(name, fileForColorByte.ToArray());
@@ -185,12 +210,16 @@ namespace PainCsharp
                     MessageBox.Show("Изображение не монохромно, целью были моего создания была работа с монохромными изображениями");
                     break;
                 }
+                label.Text = "Изображений обработанно: " + (i + 1).ToString();
             }
             MessageBox.Show("DONE");
             Mono = true;
+            bar.Visible = false;
+            label.Visible = false;
         }
         public void StringZmey(List<Bitmap> files2)
         {
+            ProgressBarAndLabelAndMasIni(files2.Count() * files2[1].Width * files2[1].Height, files2[1].Width * files2[1].Height);
             Color color;
             Byte bright8 = 0;
             for (int i = 0; i < files2.Count; i++)
@@ -243,6 +272,7 @@ namespace PainCsharp
                                         bright = (R << 16) + (G << 8) + B;
                                         fileForColor.Add(bright.ToString());
                                         */
+                                        bar.Value++;
                                     }
                                 }
                             }
@@ -251,6 +281,7 @@ namespace PainCsharp
                                 Mono = false;
                                 break;
                             }
+                            bar.Value++;
                         }
                     }
 
@@ -268,9 +299,12 @@ namespace PainCsharp
                     MessageBox.Show("Изображение не монохромно, целью были моего создания была работа с монохромными изображениями");
                     break;
                 }
+                label.Text = "Изображений обработанно: " + (i + 1).ToString();
             }
             MessageBox.Show("DONE");
             Mono = true;
+            bar.Visible = false;
+            label.Visible = false;
         }
     }
 }

@@ -14,9 +14,9 @@ namespace PainCsharp
 {
     public partial class Form1 : Form
     {
-        
-      //  public static extern int Vvod(int parm, int parm2);
-        private ColumgAndString CAS = new ColumgAndString();
+
+        //  public static extern int Vvod(int parm, int parm2);
+        private ColumgAndString CAS = new ColumgAndString();// (progressBarConvertToTxt, progressConvertToTxt);
         private int numberOfImage = 0;
         private int numberOfImage2 = 0;
         public int NumberOfImage
@@ -217,9 +217,11 @@ namespace PainCsharp
             NumOfImage = int.Parse(s);
             return NumOfImage;
         }
-        private void button4_Click(object sender, EventArgs e)      //сработает для COLUMNEZE       
+        /* Выводит изображение из txt файла
+         * в выбранный текстбокс
+         */
+        private void button4_Click(object sender, EventArgs e)      //сработает для STRINGEZE       
         {
-
             List<byte> file1 = new List<byte>();
             int w = 320, h = 1200;
             Bitmap im = new Bitmap(w, h);
@@ -228,7 +230,7 @@ namespace PainCsharp
             if (openFileDialog3.ShowDialog() == DialogResult.OK)
             {
                 file1 = File.ReadAllBytes(openFileDialog3.FileName).ToList();
-                if (file1.Count() < 1) return;
+                if (file1.Count() <= 1) return;
                 if (NumberOfImage > 1)
                 {
                     string s = openFileDialog3.SafeFileName;
@@ -244,10 +246,6 @@ namespace PainCsharp
                         byte b = r;
                         color = Color.FromArgb(r, g, b);
                         im.SetPixel(xx, y, color);
-                        if (xx == 0 && y > 1190)
-                        {
-
-                        }
                     }
                 }
                 if (int.Parse(comboBox2.Text) == 1)
@@ -257,7 +255,7 @@ namespace PainCsharp
             }
         }
 
-
+        /* Сохраняет изображение из выбранного текстбокса в txt*/
         private void ImToTxt_Click(object sender, EventArgs e)
         {
             try
@@ -459,6 +457,7 @@ namespace PainCsharp
                 MessageBox.Show("Количество изображений нужно увеличить");
             }
             CAS.bar = progressBarConvertToTxt;
+            CAS.label = progressConvertToTxt;
             progressConvertToTxt.Visible = false;
             switch (int.Parse(comboBox3.Text))
             {
@@ -482,6 +481,8 @@ namespace PainCsharp
                     MessageBox.Show("Что-то не так с выбранным числом в комбобоксе №3");
                     break;
             }
+            /* Объединим полученные файлы в 1, из которого после сделаем матрицу */
+
         }
         /* функция для расчёта корреляционной матрицы
          * Входные параметры:
@@ -507,7 +508,7 @@ namespace PainCsharp
             return corr;
         }
 
-
+        /*Строит ковариационную матрицу*/
         private void Matrix_Click(object sender, EventArgs e)
         {
            // MessageBox.Show("Парм, который ты добавил: {0}", parm3.ToString());
@@ -601,6 +602,7 @@ namespace PainCsharp
             }
             file.Close();
         }
+
 
         //TODO: сделай матрицу КОВАРИАЦИЙ треугольной, найди собственные вектора и собственные числа
         /* поиск собственных значений
