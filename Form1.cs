@@ -17,6 +17,8 @@ namespace PainCsharp
 
         //  public static extern int Vvod(int parm, int parm2);
         private ColumgAndString CAS = new ColumgAndString();// (progressBarConvertToTxt, progressConvertToTxt);
+        private int Height { get; set; }
+        private int Width { get; set; }
         private int numberOfImage = 0;
         private int numberOfImage2 = 0;
         public int NumberOfImage
@@ -112,21 +114,21 @@ namespace PainCsharp
 
             //Объявляем переменные для значений высоты и ширины матрицы (картинки)...
             //...и тут же задаем значения этих переменных взяв их из высоты и ширины картинки в пикселях
-            int height = b1.Height; //Это высота картинки, и наша матрица по вертикали будет состоять из точно такого же числа элементов.
-            int width = b1.Width; //Это ширина картинки, т.е. число элементов матрицы по горизонтали
-            progressBarConvertToTxt.Maximum = height+2;
+            Height = b1.Height; //Это высота картинки, и наша матрица по вертикали будет состоять из точно такого же числа элементов.
+            Width = b1.Width; //Это ширина картинки, т.е. число элементов матрицы по горизонтали
+            progressBarConvertToTxt.Maximum = Height+2;
             //Тут мы объявляем саму матрицу в виде двумерного массива,
-            Color[,] colorMatrix = new Color[width, height];
+            Color[,] colorMatrix = new Color[Width, Height];
 
             //Цикл будет выполняться от 0 и до тех пор, пока y меньше height (высоты матрицы и картинки)
             //На каждой итерации увеличиваем значение y на единицу.
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < Height; y++)
             {
                 //В начале каждой итерации мы обнуляем переменные для формирования строк для файлов
                 FileLine1 = string.Empty;
                 FileLine2 = string.Empty;
                 //А теперь сканируем горизонтальные строки матрицы:
-                for (int x = 0; x < width; x++)
+                for (int x = 0; x < Width; x++)
                 {
                     //В матрицу добавляем цвет точки с координатами x,y из картинки b1.            
                     colorMatrix[x, y] = b1.GetPixel(x, y);
@@ -155,6 +157,7 @@ namespace PainCsharp
 
         }
 
+        /* выбать первое изображение*/
         private void button1_Click(object sender, EventArgs e)
         {
             if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -182,6 +185,7 @@ namespace PainCsharp
             }
         }
 
+        /* выбрать второе изображение, теперь этой кнопки нет */
         private void button2_Click(object sender, EventArgs e)
         {
 
@@ -219,6 +223,7 @@ namespace PainCsharp
         }
         /* Выводит изображение из txt файла
          * в выбранный текстбокс
+         * откуда здесь брать разрешение изображения пока не знаю, только если в файле хранить
          */
         private void button4_Click(object sender, EventArgs e)      //сработает для STRINGEZE       
         {
@@ -239,7 +244,7 @@ namespace PainCsharp
                 //x,y - координаты для пикселей в файле
                 for (int y = 0; y < h; y++)
                 {//xx - координаты для изображения, которое строим
-                    for (int xx = 0; xx < 320; xx++,n++)
+                    for (int xx = 0; xx < w; xx++,n++)
                     {
                         byte r = file1[n];
                         byte g = r;
@@ -486,56 +491,107 @@ namespace PainCsharp
         }
         /* функция для расчёта корреляционной матрицы
          * Входные параметры:
-         * double[,] nums - исходная матрица
+         * double[][] nums - исходная матрица
          * double[] means - среднии значения столбцов исходной матрицы
          * int n - размерность исходной матрицы
          * Возвращаемое значение:
          * double [,] corr - корреляционная матрица
          */
 
-        private static double[,] GetCovarMatrix(double[,] nums, double[] means, int n)
+        private static double[][] GetCovarMatrix(double[][] nums, double[] means, long n)
         {
-            double[,] corr = new double[n, n];
+            /* TODO:
+             * перепиши алгоритм, ибо там где выделяется дохуя памяти - vs ругается на это
+             * подумай, как переделать действия в циклах так, не потребовалось выделение
+             * ресурсов для связанной с нулями хери
+             */
+            double[][] corr = new double[n][];
+            for (int i = 0; i < n; i++)
+                corr[i] = new double[n];    //дохуя памяти
 
             for (int i = 0; i < n; i++)
                 for (int j = i; j < n; j++)
                 {
                     double sum = 0;
                     for (int k = 0; k < n; k++)
-                        sum += ((nums[k, i] - means[i]) * (nums[k, j] - means[j]));
-                    corr[i, j] = corr[j, i] = sum / (n - 1);
+                        sum += ((nums[k][i] - means[i]) * (nums[k][j] - means[j]));
+                    corr[i][j] = corr[j][i] = sum / (n - 1);
                 }
             return corr;
         }
 
-        /*Строит ковариационную матрицу*/
+        /*Строит ковариационную матрицу
+         * Массив AllPictures - получен из ColumnAndString, в нём все изображения
+         * записаны построчно.
+         * Поскольку кол-во столбцов в несколько тысяч раз превышает
+         * кол-во строк, а в итоге должна быть квадратая матрица,
+         * было принято решение объявить массив из массивов nums.
+         * Он будет содержать в себе AllPictures, а оставшиеся пустые
+         * места заполнит 0.
+         * */
+
         private void Matrix_Click(object sender, EventArgs e)
         {
            // MessageBox.Show("Парм, который ты добавил: {0}", parm3.ToString());
             /* так как пока не пробовал это на нормальных данных, задаю всё "топорно"*/
-            const int n = 3;                           // размерность матрицы
+            
+            //double[,] nums = new double[n, n]          //исходная матрица 
+            //{   { 3, 1, 2},
+            //    { 4, 6, 5},
+            //    { 7, 9, 8}
+            //};
+          //  double[,] correlation = new double[n, n];   //Корреляционная матрица
+            
+            long n = CAS.AllPictures.GetLongLength(1); //количество элементов в строке
+            Rotation MatrixForRot = new Rotation(progressBarConvertToTxt, progressConvertToTxt, n);     // Для расчёта собственных значений и векторов
+            List<double[]> list = new List<double[]>();
+            long h = CAS.AllPictures.GetLongLength(0); //в столбце
+            double[] copy = new double[n];  //"промежуточный массив" для нормального объявления матрицы
+            double[][] nums = new double[n][]; //исходная матрица с изображениями
+            //for(int i=0;i<n;i++)
+            //{
+            //    nums[i] = new double[n];
+            //}
+            for (int i = 0; i < h; i++)
+            {
+                nums[i] = new double[n];
+                for (int j = 0; j < n; j++)
+                {
+                    copy[j] = CAS.AllPictures[i, j];
+                    if (j == n - 1)
+                    {
+                        copy.CopyTo(nums[i], 0);
+                    }
+                }
+                //if (i == h - 1)
+                //    for (long k = 0,l = h; k < n; k++,l++)
+                //    {
+                //        nums[l] = new double[n];
+                //    }
+            }
             double mean = 0;                           //среднее значение
             double[] meanMass = new double[n];         //массив для средних значений == вектор средних
             double[] dispmatr = new double[n];         //массив для дисперсий
-            double[,] nums = new double[n, n]          //исходная матрица 
-            {   { 3, 1, 2},
-                { 4, 6, 5},
-                { 7, 9, 8}
-            };
-          //  double[,] correlation = new double[n, n];   //Корреляционная матрица
-            double[,] MatrixK = new double[n, n];       //ковариационная матрица
-            Rotation MatrixForRot = new Rotation(progressBarConvertToTxt, progressConvertToTxt);     // Для расчёта собственных значений и векторов
-
+            double[][] MatrixK = new double[n][];       //ковариационная матрица
+            for (int i = 0; i < h; i++)
+            {
+                MatrixK[i] = new double[n];
+            }
             /* получение среднего значения для каждого столбца */
             for (int j = 0; j < n; j++) 
             {
                 double sum = 0;
                 for (int i = 0; i < n; i++)
                 {
-                    sum += nums[i, j]; 
-                    mean = sum / n;
-                    meanMass[j] = mean;
+                    if (nums[i] == null)
+                        break;
+                    else
+                    {
+                        sum += nums[i][j];
+                        mean = sum / n;
+                    }
                 }
+                meanMass[j] = mean;
             }
 
             /*РАСЧЁТ ДИСПЕРСИИ*/
@@ -546,7 +602,14 @@ namespace PainCsharp
                        dispersion = 0; //дисперсия для 
                 for (int i = 0; i < n; i++)
                 {
-                    semiDispersion += Math.Pow((nums[i, j] - meanMass[j]), 2);
+                    if (nums[i] != null)
+                        semiDispersion += Math.Pow((nums[i][j] - meanMass[j]), 2); // тут следующая ошибка
+                    else
+                    {
+                        // semiDispersion += Math.Pow(meanMass[j], 2);
+                        semiDispersion += (Math.Pow(meanMass[j], 2)) * (n - i);
+                        break;
+                    }
                 }
                 dispersion = semiDispersion / (n-1);
                 dispmatr[j] = dispersion;
@@ -567,7 +630,7 @@ namespace PainCsharp
             {
                 for (int j = 0; j < n; j++)
                 {
-                    file.Write(MatrixK[i, j] + " ");
+                    file.Write(MatrixK[i][j] + " ");
                 }
                 file.WriteLine();
             }
@@ -586,18 +649,18 @@ namespace PainCsharp
             }*/
             //   CalcOwnValue(MatrixK, dispmatr, n);
 
-            double[,] MatrixResult = MatrixForRot.RotationMethod(MatrixK, n);
+            double[][] MatrixResult = MatrixForRot.RotationMethod(MatrixK, n);
             file.WriteLine("Собственные значения:");
             for (int i = 0; i < n; i++)
             {
-                file.Write(MatrixResult[i, i].ToString("0.000") + " ");
+                file.Write(MatrixResult[i][i].ToString("0.000") + " ");
                 file.WriteLine();
             }
             file.WriteLine("Собственные вектора:");
             for (int j = 0; j < n; j++) 
             {
                 for (int i = 0; i < n; i++)
-                    file.Write(MatrixForRot.MatrixForOwnVectors[i, j].ToString("0.000") + " ");
+                    file.Write(MatrixForRot.MatrixForOwnVectors[i][j].ToString("0.000") + " ");
                 file.WriteLine();
             }
             file.Close();

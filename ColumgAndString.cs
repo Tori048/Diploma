@@ -16,14 +16,29 @@ namespace PainCsharp
         private List<Byte> fileForColorByte = new List<Byte>();
         private bool Mono = true;
         // private static List<string> SS = new List<string>();
-        private double[,] AllPictures;
-//        private Thread SumBitmaps = new Thread(new ParameterizedThreadStart(SummaOfBitmaps));
-
-        public static void SummaOfBitmaps (List<Byte> list)
+        public double[,] AllPictures { get; set; }
+        /* Объединяет все изображения в 1 массив AllPictures и записывает
+         * все изображения в отдельный файл, в зависимости от типа 
+         * их обработки
+         * list - побитовое представление картинки
+         * name - имя файла, в котором будут все изображения
+         * iter - номер присланного сообщения (играет роль того, в какую строку будет 
+         * писаться текущее изображение)
+         */
+        public void SummaOfBitmaps(List<Byte> list, string name, int iter)
         {
-            /*TODO: напиши закидывание всех изображений в массив AllPictures,
-            возможно его придётся переделать под массив массивов, но хз
-            */
+            int i = 0;
+            foreach (var Byte in list)
+            {
+                AllPictures[iter, i] = Byte;
+                ++i;
+            }
+            Stream fs = new FileStream(name, FileMode.Append, FileAccess.Write);
+            using (BinaryWriter bw = new BinaryWriter(fs))
+            {
+                bw.Write(list.ToArray(), 0, list.Count());
+            }
+            fs.Close();
         }
         /* Инициализируем лейбл, прогресс бар и массив, в котором будут все изображения*/
         public void ProgressBarAndLabelAndMasIni(int countIter,int sizeOfMas)
@@ -36,7 +51,8 @@ namespace PainCsharp
         }
         public void ColumnEze(List<Bitmap> files2)
         {
-            ProgressBarAndLabelAndMasIni(files2.Count()* files2[1].Width* files2[1].Height, files2[1].Width * files2[1].Height);
+            int WxH = files2[1].Width * files2[1].Height;
+            ProgressBarAndLabelAndMasIni(files2.Count()* WxH, WxH);
             Color color;
             for (int i = 0; i < files2.Count; i++)
             {
@@ -71,10 +87,10 @@ namespace PainCsharp
                             break;
                         }
                     }
-                    
+
                     string name = i.ToString() + " ColumnEze.txt";
                     File.WriteAllBytes(name, fileForColorByte.ToArray());
-                    SummaOfBitmaps(fileForColorByte);
+                    SummaOfBitmaps(fileForColorByte, "AllColumnEze.txt", i);
                     fileForColorByte.Clear();
                 }
                 else
@@ -83,9 +99,10 @@ namespace PainCsharp
                     MessageBox.Show("Изображение не монохромно, целью были моего создания была работа с монохромными изображениями");
                     break;
                 }
-                label.Text = "Изображений обработанно: " + (i+1).ToString();
+                label.Text = "Изображений обработанно: " + (i + 1).ToString();
                 //Application.DoEvents();
             }
+            
             MessageBox.Show("DONE");
             Mono = true;
             bar.Visible = false;
@@ -149,6 +166,7 @@ namespace PainCsharp
                     }
                     string name = i.ToString() + " ColumnZmey.txt";
                     File.WriteAllBytes(name, fileForColorByte.ToArray());
+                    SummaOfBitmaps(fileForColorByte, "AllColumnZmey.txt", i);
                     fileForColorByte.Clear();
                     bright8 = 0;
                 }
@@ -202,6 +220,7 @@ namespace PainCsharp
                     }
                     string name = i.ToString() + " StringEze.txt";
                     File.WriteAllBytes(name, fileForColorByte.ToArray());
+                    SummaOfBitmaps(fileForColorByte, "AllStringEze.txt", i);
                     fileForColorByte.Clear();
                 }
                 else
@@ -287,6 +306,7 @@ namespace PainCsharp
 
                     string name = i.ToString() + " StringZmey.txt";
                     File.WriteAllBytes(name, fileForColorByte.ToArray());
+                    SummaOfBitmaps(fileForColorByte, "AllStringZmey.txt", i);
                     fileForColorByte.Clear();
                     /* for non-mono image
                   File.WriteAllLines(name, fileForColor);
