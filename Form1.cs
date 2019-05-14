@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Collections;
 
 namespace PainCsharp
 {
@@ -464,6 +465,7 @@ namespace PainCsharp
             CAS.bar = progressBarConvertToTxt;
             CAS.label = progressConvertToTxt;
             progressConvertToTxt.Visible = false;
+            if(comboBox3.Text !="")
             switch (int.Parse(comboBox3.Text))
             {
                 case 1:
@@ -486,6 +488,8 @@ namespace PainCsharp
                     MessageBox.Show("Что-то не так с выбранным числом в комбобоксе №3");
                     break;
             }
+            else
+                MessageBox.Show("Не выбрал как обрабатывать");
             /* Объединим полученные файлы в 1, из которого после сделаем матрицу */
 
         }
@@ -506,17 +510,36 @@ namespace PainCsharp
              * ресурсов для связанной с нулями хери
              */
             double[][] corr = new double[n][];
-            for (int i = 0; i < n; i++)
-                corr[i] = new double[n];    //дохуя памяти
+
+            //теперь ты будешь тут хранить поддиаганальную часть матрицы.
+            //for (int k = 1; k < 50; k++)
+            //{
+            //    for (long i = ((k - 1) * (n / 50)); i < k * (n / 50); i++)
+            //        corr[i] = new double[i + 1];
+            //}
+            ArrayList list = new ArrayList();
 
             for (int i = 0; i < n; i++)
+            {
                 for (int j = i; j < n; j++)
                 {
+                      //  corr[j] = new double[j + 1];
+                
                     double sum = 0;
                     for (int k = 0; k < n; k++)
-                        sum += ((nums[k][i] - means[i]) * (nums[k][j] - means[j]));
-                    corr[i][j] = corr[j][i] = sum / (n - 1);
+                    {
+                        if (nums[k] != null)
+                            sum += ((nums[k][i] - means[i]) * (nums[k][j] - means[j]));
+                        else
+                        {
+                            sum += ((means[i] * means[j])*(n-k+1));
+                            break;
+                        }
+                    }
+                   // /*corr[i][j] =*/ corr[j][i] = sum / (n - 1);
+                    list.Add(sum/(n - 1));
                 }
+            }
             return corr;
         }
 
