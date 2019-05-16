@@ -493,6 +493,37 @@ namespace PainCsharp
             /* Объединим полученные файлы в 1, из которого после сделаем матрицу */
 
         }
+
+         private static double[] GetCovarMatrix(double [][]nums,double[] means, long n,int iter)
+        {
+            int i = iter;
+            double[] mas = new double[n];
+         //   for (int i = 0; i < n; i++)
+         //   {
+                for (int j = i; j < n; j++)
+                {
+                    //  corr[j] = new double[j + 1];
+
+                    double sum = 0;
+                    for (int k = 0; k < n; k++)
+                    {
+                        if (nums[k] != null)
+                            sum += ((nums[k][i] - means[i]) * (nums[k][j] - means[j]));
+                        else
+                        {
+                            if (k != n - 1)
+                                sum += ((means[i] * means[j]) * (n - k + 1));
+                            else
+                                sum += (means[i] * means[j]);
+                            break;
+                        }
+                    }
+                    mas[j] = sum / (n - 1);
+                    //corr[i][j] = corr[j][i] = sum / (n - 1);
+          //      }
+            }
+            return mas;
+        }
         /* функция для расчёта корреляционной матрицы
          * Входные параметры:
          * double[][] nums - исходная матрица
@@ -501,7 +532,6 @@ namespace PainCsharp
          * Возвращаемое значение:
          * double [,] corr - корреляционная матрица
          */
-
         private static double[][] GetCovarMatrix(double[][] nums, double[] means, long n)
         {
             /* TODO:
@@ -596,6 +626,7 @@ namespace PainCsharp
             double[] meanMass = new double[n];         //массив для средних значений == вектор средних
             double[] dispmatr = new double[n];         //массив для дисперсий
             double[][] MatrixK = new double[n][];       //ковариационная матрица
+            double[] MatrixKOne = new double[n];
             for (int i = 0; i < h; i++)
             {
                 MatrixK[i] = new double[n];
@@ -638,25 +669,36 @@ namespace PainCsharp
                 dispmatr[j] = dispersion;
             }
             // вывод дисперсии в файл:
-            StreamWriter file = new StreamWriter("Results.txt");
-            file.WriteLine("Дисперсии:");
-            for (int i = 0; i < n; i++)
-            {
-                file.WriteLine(dispmatr[i]);
-            }
-
+            StreamWriter file = new StreamWriter("E:\\Results.txt");
+            //file.WriteLine("Дисперсии:");
+            //for (int i = 0; i < n; i++)
+            //{
+            //    file.WriteLine(dispmatr[i]);
+            //}
             /* Похоже на КОВАРИАЦИОННУЮ МАТРИЦУ, А НЕ КОРРЕЛЯЦИОННУЮ */
             file.WriteLine("Ковариационная матрица:");
             // Получение ковариационной матрицы
-            MatrixK = GetCovarMatrix(nums, meanMass, n);
-            for (int i = 0; i < n; i++)
+            /* из-за того, что nXn - слишком много, жертвую скоростью
+             * и каждый столбец матрицы будет строиться отдельно
+             */
+            for (int i = 0; i < 3; i++)
             {
+                MatrixKOne = GetCovarMatrix(nums, meanMass, n, i);
                 for (int j = 0; j < n; j++)
                 {
-                    file.Write(MatrixK[i][j] + " ");
+                    file.Write(MatrixKOne[j] + " ");
                 }
                 file.WriteLine();
             }
+            //MatrixK = GetCovarMatrix(nums, meanMass, n);
+            //for (int i = 0; i < n; i++)
+            //{
+            //    for (int j = 0; j < n; j++)
+            //    {
+            //        file.Write(MatrixK[i][j] + " ");
+            //    }
+            //    file.WriteLine();
+            //}
             /*
             // получение ковариационной матрицы из корреляционной
             file.WriteLine("Ковариационная матрица:");
@@ -671,6 +713,8 @@ namespace PainCsharp
                 file.WriteLine();
             }*/
             //   CalcOwnValue(MatrixK, dispmatr, n);
+            //file.Close();
+            double[] MatrixResultOne = MatrixForRot.RotationMethod(MatrixK, n,1);
 
             double[][] MatrixResult = MatrixForRot.RotationMethod(MatrixK, n);
             file.WriteLine("Собственные значения:");
