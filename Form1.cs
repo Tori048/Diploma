@@ -226,7 +226,7 @@ namespace PainCsharp
          * в выбранный текстбокс
          * откуда здесь брать разрешение изображения пока не знаю, только если в файле хранить
          */
-        private void button4_Click(object sender, EventArgs e)      //сработает для STRINGEZE       
+        private void FromTxtToTB(object sender, EventArgs e)      //сработает для STRINGEZE       
         {
             List<byte> file1 = new List<byte>();
             int w = 320, h = 1200;
@@ -387,7 +387,7 @@ namespace PainCsharp
         }
 
        
-
+        // блок формирования исходных векторов
         private void button9_Click(object sender, EventArgs e)
         {
             //выюираем много изображений
@@ -400,7 +400,7 @@ namespace PainCsharp
             foreach (string i in OpenManyImageForFirstStep.FileNames)
             {
                 files2.Add(Image.FromFile(OpenManyImageForFirstStep.FileNames[j]));
-                BitImage.Add(new Bitmap(files2[j]));
+                BitImage.Add(new Bitmap(files2[j]));// сделай всё c одним битмапом
                 j++;
             }
             NumberOfImage2 = files2.Count;
@@ -532,6 +532,7 @@ namespace PainCsharp
          * Возвращаемое значение:
          * double [,] corr - корреляционная матрица
          */
+         // матрица ковариаций - по кол-ву векторов, т.е. её размерность - кол-во векторов на колв-во векторов
         private static double[][] GetCovarMatrix(double[][] nums, double[] means, long n)
         {
             /* TODO:
@@ -572,7 +573,7 @@ namespace PainCsharp
             }
             return corr;
         }
-
+        // если сзначеие собственного числа далее бдет меньше чего то на вход, то построение будет остановлено
         /*Строит ковариационную матрицу
          * Массив AllPictures - получен из ColumnAndString, в нём все изображения
          * записаны построчно.
@@ -649,7 +650,7 @@ namespace PainCsharp
             }
 
             /*РАСЧЁТ ДИСПЕРСИИ*/
-
+            //среднее по писелям в каждом векторе
             for (int j = 0; j < n; j++)
             {
                 double semiDispersion = 0,

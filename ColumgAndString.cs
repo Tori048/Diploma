@@ -110,6 +110,7 @@ namespace PainCsharp
         }
         public void ColumnZmey(List<Bitmap> files2)
         {
+            //кривая ПЕАНО
             ProgressBarAndLabelAndMasIni(files2.Count() * files2[1].Width * files2[1].Height, files2[1].Width * files2[1].Height);
             Color color;
             Byte bright8 = 0;
