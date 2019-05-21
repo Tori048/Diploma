@@ -45,8 +45,6 @@
             this.openFileDialog3 = new System.Windows.Forms.OpenFileDialog();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.openFileDialog4 = new System.Windows.Forms.OpenFileDialog();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button7 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
             this.Pixel_number = new System.Windows.Forms.TextBox();
             this.button9 = new System.Windows.Forms.Button();
@@ -185,39 +183,19 @@
             this.openFileDialog4.FileName = "openFileDialog4";
             this.openFileDialog4.Multiselect = true;
             // 
-            // button6
-            // 
-            this.button6.Location = new System.Drawing.Point(668, 136);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(187, 23);
-            this.button6.TabIndex = 18;
-            this.button6.Text = "Выбрать кучу изображений";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
-            // 
-            // button7
-            // 
-            this.button7.Location = new System.Drawing.Point(669, 165);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(187, 34);
-            this.button7.TabIndex = 19;
-            this.button7.Text = "Прошить все изображения по пикселям";
-            this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.button7_Click);
-            // 
             // button8
             // 
-            this.button8.Location = new System.Drawing.Point(669, 206);
+            this.button8.Location = new System.Drawing.Point(670, 153);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(186, 37);
             this.button8.TabIndex = 20;
             this.button8.Text = "Построить график для пикселя №";
             this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
+         //   this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // Pixel_number
             // 
-            this.Pixel_number.Location = new System.Drawing.Point(862, 216);
+            this.Pixel_number.Location = new System.Drawing.Point(861, 162);
             this.Pixel_number.Name = "Pixel_number";
             this.Pixel_number.Size = new System.Drawing.Size(63, 20);
             this.Pixel_number.TabIndex = 21;
@@ -225,7 +203,7 @@
             // 
             // button9
             // 
-            this.button9.Location = new System.Drawing.Point(669, 250);
+            this.button9.Location = new System.Drawing.Point(669, 209);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(186, 23);
             this.button9.TabIndex = 22;
@@ -243,7 +221,7 @@
             "2",
             "3",
             "4"});
-            this.comboBox3.Location = new System.Drawing.Point(861, 250);
+            this.comboBox3.Location = new System.Drawing.Point(860, 211);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(37, 21);
             this.comboBox3.TabIndex = 23;
@@ -255,7 +233,7 @@
             // 
             // Matrix
             // 
-            this.Matrix.Location = new System.Drawing.Point(669, 280);
+            this.Matrix.Location = new System.Drawing.Point(669, 247);
             this.Matrix.Name = "Matrix";
             this.Matrix.Size = new System.Drawing.Size(186, 23);
             this.Matrix.TabIndex = 24;
@@ -273,8 +251,6 @@
             this.Controls.Add(this.button9);
             this.Controls.Add(this.Pixel_number);
             this.Controls.Add(this.button8);
-            this.Controls.Add(this.button7);
-            this.Controls.Add(this.button6);
             this.Controls.Add(this.comboBox2);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.progressConvertToTxt);
@@ -313,8 +289,6 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog3;
         private System.Windows.Forms.ComboBox comboBox2;
         private System.Windows.Forms.OpenFileDialog openFileDialog4;
-        private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.TextBox Pixel_number;
         private System.Windows.Forms.Button button9;

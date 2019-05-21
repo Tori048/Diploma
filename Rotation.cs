@@ -51,6 +51,7 @@ namespace PainCsharp
             int iteration = -1;
             double max = 0; //текущий максимум
             int MaxI = 0, MaxJ = 0; //координаты максимума
+            
             do
             {
                 max = 0;
