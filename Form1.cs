@@ -15,36 +15,24 @@ namespace PainCsharp
 {
     public partial class Form1 : Form
     {
-
-        //  public static extern int Vvod(int parm, int parm2);
-        private ColumgAndString CAS = new ColumgAndString();// (progressBarConvertToTxt, progressConvertToTxt);
-        private int Height { get; set; }
-        private int Width { get; set; }
-        private int numberOfImage = 0;
-        private int numberOfImage2 = 0;
-        public int NumberOfImage
-        {
-            get
-            { return numberOfImage; }
-            set
-            { numberOfImage = value; }
-        }
-        public int NumberOfImage2
-        {
-            get
-            { return numberOfImage2; }
-            set
-            { numberOfImage2 = value; }
-        }
+        private ColumgAndString CAS = new ColumgAndString();
         public Form1()
         {
             InitializeComponent();
         }
         private List<Image> files = new List<Image>();
         private List<Image> files2 = new List<Image>(); // для выбора кучи изображений
-        private List<Bitmap> BitImage = new List<Bitmap>(); // битмапы с изображениями из files2
+        private int countImages;
+        public int GetcountImages()
+        {
+            return countImages;
+        }
+        public void SetcountImages(int i)
+        {
+            countImages = i;
+        }
 
-        
+
 
         public Image Histogramma(Image PictureOne)
         {
@@ -236,12 +224,6 @@ namespace PainCsharp
             if (openFileDialog3.ShowDialog() == DialogResult.OK)
             {
                 file1 = File.ReadAllBytes(openFileDialog3.FileName).ToList();
-                if (file1.Count() <= 1) return;
-                if (NumberOfImage > 1)
-                {
-                    string s = openFileDialog3.SafeFileName;
-                    NumberOfImage = NameToNumber(s, numberOfImage);
-                }
                 //x,y - координаты для пикселей в файле
                 for (int y = 0; y < h; y++)
                 {//xx - координаты для изображения, которое строим
@@ -286,98 +268,23 @@ namespace PainCsharp
             }
         }
 
-        private void button6_Click(object sender, EventArgs e)
-        {
-            if (openFileDialog4.ShowDialog() == DialogResult.OK)
-            {
-                this.openFileDialog4.Filter = "Images (*.BMP;*)|*.BMP";
-            }
-            int j = 0;
-            //закидываем в новые битмапы все изображения по порядку
-            foreach(string i in openFileDialog4.FileNames)
-            {
-                files.Add(Image.FromFile(openFileDialog4.FileNames[j]));
-                BitImage.Add(new Bitmap(files[j]));
-                j++;
-            }
-            NumberOfImage = files.Count;
-        }
-
-        private void button7_Click(object sender, EventArgs e)
-        {
-            if(NumberOfImage > 1)
-            {
-                Color color;
-                List<Byte> file_proba = new List<Byte>();
-                int i = 1;
-                //проверяем, что размеры у всех фото одинаковы
-                foreach (Bitmap im in BitImage)
-                {
-                   // MessageBox.Show(BitImage[i].Width.ToString() + " " + BitImage[i - 1].Width.ToString() + " vs " + BitImage[i].Height.ToString() + " " + BitImage[i - 1].Height.ToString());
-                    if (BitImage[i].Width != BitImage[i - 1].Width || BitImage[i].Height != BitImage[i - 1].Height)
-                    {
-                        MessageBox.Show("Карамба!!! У изображений разные размеры!");
-                        return;
-                    }
-                    if(i< NumberOfImage-1)
-                    i++;
-                }
-                i = 0;
-                int Width = BitImage[1].Width; //ширина
-                int Height = BitImage[1].Height; //высота
-                progressBarConvertToTxt.Visible = true;
-                progressBarConvertToTxt.Maximum = Width* Height*BitImage.Count();
-                for (int y = 0; y < Height; y++)
-                {
-                    for (int x = 0; x < Width; x++)
-                    {
-                        for (int number = 0; number < NumberOfImage; number++) 
-                        {
-                            color = BitImage[number].GetPixel(x, y);
-                            file_proba.Add(color.R);
-                            file_proba.Add(color.G);
-                            file_proba.Add(color.B);
-                            i++;
-                        } 
-                        progressBarConvertToTxt.Value = i;
-                        progressConvertToTxt.Text = "Пикселей обработано: "+i.ToString();
-                       // Application.DoEvents();
-                    }
-                }
-                progressConvertToTxt.Visible = false;
-                progressBarConvertToTxt.Visible = false;
-                string name = numberOfImage.ToString() + ".bin";
-                File.WriteAllBytes(name, file_proba.ToArray());
-                MessageBox.Show("Готово");
-
-            } //END sizeMainLists > 0
-            else
-            {
-                MessageBox.Show("Тысяча чертей, мне нужно больше изображений!");
-                return;
-            }
-
-        }
-
-        private void button8_Click(object sender, EventArgs e)
-        {
-          //  if (numberOfImage < 1)
-          //      numberOfImage = 50;
-            try
-            {
-                numberOfImage = 50;
-                Form2 f = new Form2(int.Parse(Pixel_number.Text), numberOfImage,this);
-                f.Show();
-            }
-            catch(ArgumentNullException)
-            {
-                MessageBox.Show("Не ввёл номер пикселя");
-            }
-            catch (FormatException)
-            {
-                MessageBox.Show("Что-то ты ввёл не то");
-            }
-        }
+        //private void button8_Click(object sender, EventArgs e)
+        //{
+        //    try
+        //    {
+        //        numberOfImage = 50;
+        //        Form2 f = new Form2(int.Parse(Pixel_number.Text), numberOfImage,this);
+        //        f.Show();
+        //    }
+        //    catch(ArgumentNullException)
+        //    {
+        //        MessageBox.Show("Не ввёл номер пикселя");
+        //    }
+        //    catch (FormatException)
+        //    {
+        //        MessageBox.Show("Что-то ты ввёл не то");
+        //    }
+        //}
 
 
         private void Pixel_number_KeyPress(object sender, KeyPressEventArgs e)
@@ -390,108 +297,68 @@ namespace PainCsharp
 
         private void button9_Click(object sender, EventArgs e)
         {
-            //выюираем много изображений
-            if (OpenManyImageForFirstStep.ShowDialog() == DialogResult.OK)
+            if (comboBox3.Text != "")
             {
-                this.OpenManyImageForFirstStep.Filter = "Images (*.BMP;*)|*.BMP";
-            }
-            int j = 0;
-            //закидываем в новые битмапы все изображения по порядку
-            foreach (string i in OpenManyImageForFirstStep.FileNames)
-            {
-                files2.Add(Image.FromFile(OpenManyImageForFirstStep.FileNames[j]));
-                BitImage.Add(new Bitmap(files2[j]));
-                j++;
-            }
-            NumberOfImage2 = files2.Count;
-
-            // закнончили закидывать и выбирать
-
-            if (NumberOfImage2 > 1)
-            {
-             //   Color color;
-             //   List<Byte> file_proba = new List<Byte>();
-                int i = BitImage.Count-1;
-                //проверяем, что размеры у всех фото одинаковы
-                foreach (Bitmap im in BitImage)
+                int Width = 0;  //ширина изображения
+                int Height = 0; //высота изображения
+                progressBarConvertToTxt.Value = 0;
+                                //выбираем много изображений
+                if (OpenManyImageForFirstStep.ShowDialog() == DialogResult.OK)
                 {
-                    // MessageBox.Show(BitImage[i].Width.ToString() + " " + BitImage[i - 1].Width.ToString() + " vs " + BitImage[i].Height.ToString() + " " + BitImage[i - 1].Height.ToString());
-                    if (BitImage[i].Width != BitImage[i - 1].Width || BitImage[i].Height != BitImage[i - 1].Height)
-                    {
-                        MessageBox.Show("Карамба!!! У изображений разные размеры!");
-                        return;
-                    }
-                        i--;
-                    if (i == 0)
-                        break;
+                    this.OpenManyImageForFirstStep.Filter = "Images (*.BMP;*)|*.BMP";
                 }
-                i = 0;
-                //int Width = BitImage[1].Width; //ширина
-                //int Height = BitImage[1].Height; //высота
-                //progressBarConvertToTxt.Visible = true;
-                //progressBarConvertToTxt.Maximum = Width * Height * BitImage.Count();
-                //for (int number = 0; number < NumberOfImage2; number++)
-                //{
-                //    for (int y = 0; y < Height; y++)
-                //    {
-                //        for (int x = 0; x < Width; x++)
-                //        {
-                //                color = BitImage[number].GetPixel(x, y);
-                //                file_proba.Add(color.R);
-                //                file_proba.Add(color.G);
-                //                file_proba.Add(color.B);
-                //               // i++;
-                //        }
-                //    }
-                //    i++;
-                //    progressBarConvertToTxt.Value = i;
-                //    progressConvertToTxt.Text = "Изображений обработано: " + i.ToString();
-                //    string name = numberOfImage2.ToString()+" im" + ".txt";
-                //    File.WriteAllBytes(name, file_proba.ToArray());
-                //    Application.DoEvents();
-                //}
-                //progressConvertToTxt.Visible = false;
-                //progressBarConvertToTxt.Visible = false;
-                ////string name = numberOfImage.ToString() + ".txt";
-                ////File.WriteAllBytes(name, file_proba.ToArray());
-                
-                //MessageBox.Show("Готово");
-
-            } //END sizeMainLists > 0
-            else
-            {
-                MessageBox.Show("Количество изображений нужно увеличить");
+                else
+                    return;
+                countImages = OpenManyImageForFirstStep.FileNames.Length;
+                int j = 0;
+                //закидываем в новые битмапы все изображения по порядку
+                foreach (string i in OpenManyImageForFirstStep.FileNames)
+                {
+                    files2.Add(Image.FromFile(OpenManyImageForFirstStep.FileNames[j]));
+                    Bitmap bitmap = new Bitmap(files2[j]);                              //добавили изображение в битмап
+                    /* обрабатываем изображения */
+                    if(j > 0)
+                    {
+                        if (Width != bitmap.Width || Height != bitmap.Height)
+                        {
+                            MessageBox.Show("У изображений разные размеры. Обработка прервана");
+                            return;
+                        }
+                    }
+                    switch (int.Parse(comboBox3.Text))
+                    {
+                        case 1:
+                            CAS.ColumnEze(bitmap, j);
+                            break;
+                        case 2:
+                            CAS.ColumnZmey(bitmap, j);
+                            break;
+                        case 3:
+                            CAS.StringEze(bitmap, j);
+                            break;
+                        case 4:
+                            CAS.StringZmey(bitmap, j);
+                            break;
+                        default:
+                            MessageBox.Show("Что-то не так с выбранным числом в комбобоксе №3");
+                            break;
+                    }
+                    if (j == 0)
+                    {
+                        Width = bitmap.Width;
+                        Height = bitmap.Height;
+                        //progressBarConvertToTxt.Maximum = files2[0].W;
+                        progressBarConvertToTxt.Visible = true;
+                        progressConvertToTxt.Visible = true;
+                        progressBarConvertToTxt.Maximum = countImages;
+                    }
+                    progressBarConvertToTxt.Value++;
+                    bitmap.Dispose();
+                    progressConvertToTxt.Text = "Изображений обработанно " + (j+1).ToString();
+                    j++;
+                }
+                MessageBox.Show("Обработка изображений закончена");
             }
-            CAS.bar = progressBarConvertToTxt;
-            CAS.label = progressConvertToTxt;
-            progressConvertToTxt.Visible = false;
-            if(comboBox3.Text !="")
-            switch (int.Parse(comboBox3.Text))
-            {
-                case 1:
-                    CAS.ColumnEze(BitImage);
-                    BitImage.Clear();
-                    break;
-                case 2:
-                    CAS.ColumnZmey(BitImage);
-                    BitImage.Clear();
-                    break;
-                case 3:
-                    CAS.StringEze(BitImage);
-                    BitImage.Clear();
-                    break;
-                case 4:
-                    CAS.StringZmey(BitImage);
-                    BitImage.Clear();
-                    break;
-                default:
-                    MessageBox.Show("Что-то не так с выбранным числом в комбобоксе №3");
-                    break;
-            }
-            else
-                MessageBox.Show("Не выбрал как обрабатывать");
-            /* Объединим полученные файлы в 1, из которого после сделаем матрицу */
-
         }
 
          private static double[] GetCovarMatrix(double [][]nums,double[] means, long n,int iter)
@@ -585,33 +452,19 @@ namespace PainCsharp
 
         private void Matrix_Click(object sender, EventArgs e)
         {
-           // MessageBox.Show("Парм, который ты добавил: {0}", parm3.ToString());
-            /* так как пока не пробовал это на нормальных данных, задаю всё "топорно"*/
-            
-            //double[,] nums = new double[n, n]          //исходная матрица 
-            //{   { 3, 1, 2},
-            //    { 4, 6, 5},
-            //    { 7, 9, 8}
-            //};
-          //  double[,] correlation = new double[n, n];   //Корреляционная матрица
-            
-            long n = CAS.AllPictures.GetLongLength(1); //количество элементов в строке
-            Rotation MatrixForRot = new Rotation(progressBarConvertToTxt, progressConvertToTxt, n);     // Для расчёта собственных значений и векторов
-            List<double[]> list = new List<double[]>();
-            long h = CAS.AllPictures.GetLongLength(0); //в столбце
-            double[] copy = new double[n];  //"промежуточный массив" для нормального объявления матрицы
-            double[][] nums = new double[n][]; //исходная матрица с изображениями
-            //for(int i=0;i<n;i++)
-            //{
-            //    nums[i] = new double[n];
-            //}
+            if (countImages < 1)
+                return;
+            Rotation MatrixForRot = new Rotation(progressBarConvertToTxt, progressConvertToTxt, countImages);     // Для расчёта собственных значений и векторов
+            long h = CAS.AllPictures.Length; //в столбце
+            double[] copy = new double[countImages];  //"промежуточный массив" для нормального объявления матрицы
+            double[][] nums = new double[countImages][]; //исходная матрица с изображениями
             for (int i = 0; i < h; i++)
             {
-                nums[i] = new double[n];
-                for (int j = 0; j < n; j++)
+                nums[i] = new double[countImages];
+                for (int j = 0; j < countImages; j++)
                 {
-                    copy[j] = CAS.AllPictures[i, j];
-                    if (j == n - 1)
+               //     copy[j] = CAS.AllPictures[i, j];
+                    if (j == countImages - 1)
                     {
                         copy.CopyTo(nums[i], 0);
                     }
@@ -623,26 +476,29 @@ namespace PainCsharp
                 //    }
             }
             double mean = 0;                           //среднее значение
-            double[] meanMass = new double[n];         //массив для средних значений == вектор средних
-            double[] dispmatr = new double[n];         //массив для дисперсий
-            double[][] MatrixK = new double[n][];       //ковариационная матрица
-            double[] MatrixKOne = new double[n];
+            double[] meanMass = new double[countImages];         //массив для средних значений == вектор средних    УДАЛИТЬ
+
+            double[] meanMas = new double[countImages];            //массив для среднего значения в каждом изображении == вектор средних
+
+            double[] dispmatr = new double[countImages];         //массив для дисперсий
+            double[][] MatrixK = new double[countImages][];       //ковариационная матрица
+            double[] MatrixKOne = new double[countImages];
             for (int i = 0; i < h; i++)
             {
-                MatrixK[i] = new double[n];
+                MatrixK[i] = new double[countImages];
             }
             /* получение среднего значения для каждого столбца */
-            for (int j = 0; j < n; j++) 
+            for (int j = 0; j < countImages; j++) 
             {
                 double sum = 0;
-                for (int i = 0; i < n; i++)
+                for (int i = 0; i < countImages; i++)
                 {
                     if (nums[i] == null)
                         break;
                     else
                     {
                         sum += nums[i][j];
-                        mean = sum / n;
+                        mean = sum / countImages;
                     }
                 }
                 meanMass[j] = mean;
@@ -650,22 +506,22 @@ namespace PainCsharp
 
             /*РАСЧЁТ ДИСПЕРСИИ*/
 
-            for (int j = 0; j < n; j++)
+            for (int j = 0; j < countImages; j++)
             {
                 double semiDispersion = 0,
                        dispersion = 0; //дисперсия для 
-                for (int i = 0; i < n; i++)
+                for (int i = 0; i < countImages; i++)
                 {
                     if (nums[i] != null)
                         semiDispersion += Math.Pow((nums[i][j] - meanMass[j]), 2); // тут следующая ошибка
                     else
                     {
                         // semiDispersion += Math.Pow(meanMass[j], 2);
-                        semiDispersion += (Math.Pow(meanMass[j], 2)) * (n - i);
+                        semiDispersion += (Math.Pow(meanMass[j], 2)) * (countImages - i);
                         break;
                     }
                 }
-                dispersion = semiDispersion / (n-1);
+                dispersion = semiDispersion / (countImages-1);
                 dispmatr[j] = dispersion;
             }
             // вывод дисперсии в файл:
@@ -683,13 +539,21 @@ namespace PainCsharp
              */
             for (int i = 0; i < 3; i++)
             {
-                MatrixKOne = GetCovarMatrix(nums, meanMass, n, i);
-                for (int j = 0; j < n; j++)
+                MatrixKOne = GetCovarMatrix(nums, meanMass, countImages, i);
+                if(MatrixKOne[0]== 0 && MatrixKOne[1] == 0 && MatrixKOne[110] == 0)
+                {
+                    MessageBox.Show("We have a problem - all elements from matrixKOne equals a 0");
+                    file.Close();
+                    break;
+                }
+                for (int j = 0; j < countImages; j++)
                 {
                     file.Write(MatrixKOne[j] + " ");
                 }
                 file.WriteLine();
             }
+            byte f = Convert.ToByte(MatrixKOne[2]);
+            //File.WriteAllBytes("LOL.txt", MatrixKOne.ToArray());
             //MatrixK = GetCovarMatrix(nums, meanMass, n);
             //for (int i = 0; i < n; i++)
             //{
@@ -714,19 +578,19 @@ namespace PainCsharp
             }*/
             //   CalcOwnValue(MatrixK, dispmatr, n);
             //file.Close();
-            double[] MatrixResultOne = MatrixForRot.RotationMethod(MatrixK, n,1);
+            double[] MatrixResultOne = MatrixForRot.RotationMethod(MatrixK, countImages,1);
 
-            double[][] MatrixResult = MatrixForRot.RotationMethod(MatrixK, n);
+            double[][] MatrixResult = MatrixForRot.RotationMethod(MatrixK, countImages);
             file.WriteLine("Собственные значения:");
-            for (int i = 0; i < n; i++)
+            for (int i = 0; i < countImages; i++)
             {
                 file.Write(MatrixResult[i][i].ToString("0.000") + " ");
                 file.WriteLine();
             }
             file.WriteLine("Собственные вектора:");
-            for (int j = 0; j < n; j++) 
+            for (int j = 0; j < countImages; j++) 
             {
-                for (int i = 0; i < n; i++)
+                for (int i = 0; i < countImages; i++)
                     file.Write(MatrixForRot.MatrixForOwnVectors[i][j].ToString("0.000") + " ");
                 file.WriteLine();
             }
