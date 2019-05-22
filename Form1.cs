@@ -214,7 +214,7 @@ namespace PainCsharp
          * в выбранный текстбокс
          * откуда здесь брать разрешение изображения пока не знаю, только если в файле хранить
          */
-        private void button4_Click(object sender, EventArgs e)      //сработает для STRINGEZE       
+        private void FromTxtToTB(object sender, EventArgs e)      //сработает для STRINGEZE       
         {
             List<byte> file1 = new List<byte>();
             int w = 320, h = 1200;
@@ -294,7 +294,7 @@ namespace PainCsharp
         }
 
        
-
+        // блок формирования исходных векторов
         private void button9_Click(object sender, EventArgs e)
         {
             if (comboBox3.Text != "")
@@ -399,6 +399,7 @@ namespace PainCsharp
          * Возвращаемое значение:
          * double [,] corr - корреляционная матрица
          */
+         // матрица ковариаций - по кол-ву векторов, т.е. её размерность - кол-во векторов на колв-во векторов
         private static double[][] GetCovarMatrix(double[][] nums, double[] means, long n)
         {
             /* TODO:
@@ -439,7 +440,7 @@ namespace PainCsharp
             }
             return corr;
         }
-
+        // если сзначеие собственного числа далее бдет меньше чего то на вход, то построение будет остановлено
         /*Строит ковариационную матрицу
          * Массив AllPictures - получен из ColumnAndString, в нём все изображения
          * записаны построчно.
@@ -452,10 +453,11 @@ namespace PainCsharp
 
         private void Matrix_Click(object sender, EventArgs e)
         {
+            countImages = 2;
             if (countImages < 1)
                 return;
             Rotation MatrixForRot = new Rotation(progressBarConvertToTxt, progressConvertToTxt, countImages);     // Для расчёта собственных значений и векторов
-            long h = CAS.AllPictures.Length; //в столбце
+            long h = 2/* CAS.AllPictures.Length*/; //в столбце
             double[] copy = new double[countImages];  //"промежуточный массив" для нормального объявления матрицы
             double[][] nums = new double[countImages][]; //исходная матрица с изображениями
             for (int i = 0; i < h; i++)
@@ -469,11 +471,6 @@ namespace PainCsharp
                         copy.CopyTo(nums[i], 0);
                     }
                 }
-                //if (i == h - 1)
-                //    for (long k = 0,l = h; k < n; k++,l++)
-                //    {
-                //        nums[l] = new double[n];
-                //    }
             }
             double mean = 0;                           //среднее значение
             double[] meanMass = new double[countImages];         //массив для средних значений == вектор средних    УДАЛИТЬ
@@ -487,25 +484,46 @@ namespace PainCsharp
             {
                 MatrixK[i] = new double[countImages];
             }
+
+            double[,] mat = new double[countImages,10];
+            mat[0, 0] = 10;
+            mat[0, 1] = 12;
+            mat[0, 2] = 10.5;
+            mat[0, 3] = 10.7;
+            mat[0, 4] = 11.5;
+            mat[0, 5] = 11.8;
+            mat[0, 6] = 12.3;
+            mat[0, 7] = 12.5;
+            mat[0, 8] = 12.5;
+            mat[0, 9] = 13.1;
+            mat[1, 0] = 5.1;
+            mat[1, 1] = 5.6;
+            mat[1, 2] = 5.7;
+            mat[1, 3] = 5.5;
+            mat[1, 4] = 5.4;
+            mat[1, 5] = 5.3;
+            mat[1, 6] = 5.2;
+            mat[1, 7] = 5.0;
+            mat[1, 8] = 5.2;
+            mat[1, 9] = 5.3;
             /* получение среднего значения для каждого столбца */
             for (int j = 0; j < countImages; j++) 
             {
                 double sum = 0;
-                for (int i = 0; i < countImages; i++)
+                for (int i = 0; i < 10 /*countImages*/; i++)
                 {
-                    if (nums[i] == null)
-                        break;
-                    else
-                    {
-                        sum += nums[i][j];
+                    //if (nums[i] == null)
+                      //  break;
+                    //else
+                    //{
+                        sum += mat[j,i];
                         mean = sum / countImages;
-                    }
+                    //}
                 }
                 meanMass[j] = mean;
             }
 
             /*РАСЧЁТ ДИСПЕРСИИ*/
-
             for (int j = 0; j < countImages; j++)
             {
                 double semiDispersion = 0,
@@ -513,7 +531,7 @@ namespace PainCsharp
                 for (int i = 0; i < countImages; i++)
                 {
                     if (nums[i] != null)
-                        semiDispersion += Math.Pow((nums[i][j] - meanMass[j]), 2); // тут следующая ошибка
+                        semiDispersion += Math.Pow((/*nums*/mat[i,j] - meanMass[j]), 2); // тут следующая ошибка
                     else
                     {
                         // semiDispersion += Math.Pow(meanMass[j], 2);
@@ -534,9 +552,6 @@ namespace PainCsharp
             /* Похоже на КОВАРИАЦИОННУЮ МАТРИЦУ, А НЕ КОРРЕЛЯЦИОННУЮ */
             file.WriteLine("Ковариационная матрица:");
             // Получение ковариационной матрицы
-            /* из-за того, что nXn - слишком много, жертвую скоростью
-             * и каждый столбец матрицы будет строиться отдельно
-             */
             for (int i = 0; i < 3; i++)
             {
                 MatrixKOne = GetCovarMatrix(nums, meanMass, countImages, i);
