@@ -214,7 +214,7 @@ namespace PainCsharp
          * в выбранный текстбокс
          * откуда здесь брать разрешение изображения пока не знаю, только если в файле хранить
          */
-        private void FromTxtToTB(object sender, EventArgs e)      //сработает для STRINGEZE       
+        private void button4_Click(object sender, EventArgs e)      //сработает для STRINGEZE       
         {
             List<byte> file1 = new List<byte>();
             int w = 320, h = 1200;
@@ -294,7 +294,7 @@ namespace PainCsharp
         }
 
        
-        // блок формирования исходных векторов
+
         private void button9_Click(object sender, EventArgs e)
         {
             if (comboBox3.Text != "")
@@ -399,7 +399,6 @@ namespace PainCsharp
          * Возвращаемое значение:
          * double [,] corr - корреляционная матрица
          */
-         // матрица ковариаций - по кол-ву векторов, т.е. её размерность - кол-во векторов на колв-во векторов
         private static double[][] GetCovarMatrix(double[][] nums, double[] means, long n)
         {
             /* TODO:
@@ -440,7 +439,7 @@ namespace PainCsharp
             }
             return corr;
         }
-        // если сзначеие собственного числа далее бдет меньше чего то на вход, то построение будет остановлено
+
         /*Строит ковариационную матрицу
          * Массив AllPictures - получен из ColumnAndString, в нём все изображения
          * записаны построчно.
@@ -453,77 +452,37 @@ namespace PainCsharp
 
         private void Matrix_Click(object sender, EventArgs e)
         {
-            countImages = 2;
             if (countImages < 1)
                 return;
             Rotation MatrixForRot = new Rotation(progressBarConvertToTxt, progressConvertToTxt, countImages);     // Для расчёта собственных значений и векторов
-            long h = 2/* CAS.AllPictures.Length*/; //в столбце
-            double[] copy = new double[countImages];  //"промежуточный массив" для нормального объявления матрицы
-            double[][] nums = new double[countImages][]; //исходная матрица с изображениями
-            for (int i = 0; i < h; i++)
-            {
-                nums[i] = new double[countImages];
-                for (int j = 0; j < countImages; j++)
-                {
-               //     copy[j] = CAS.AllPictures[i, j];
-                    if (j == countImages - 1)
-                    {
-                        copy.CopyTo(nums[i], 0);
-                    }
-                }
-            }
-            double mean = 0;                           //среднее значение
-            double[] meanMass = new double[countImages];         //массив для средних значений == вектор средних    УДАЛИТЬ
-
+            int  h = CAS.AllPictures.Length; // количество пикселей в изображении (кол-во стобцов)
+            double[,] CompareVectors = new double[2, h]; // матрица для векторов, которые будем сравнивать и из которых будем составлять матрицу ковариаций
+            double mean = 0;                           //
             double[] meanMas = new double[countImages];            //массив для среднего значения в каждом изображении == вектор средних
 
             double[] dispmatr = new double[countImages];         //массив для дисперсий
             double[][] MatrixK = new double[countImages][];       //ковариационная матрица
             double[] MatrixKOne = new double[countImages];
-            for (int i = 0; i < h; i++)
-            {
-                MatrixK[i] = new double[countImages];
-            }
 
-            double[,] mat = new double[countImages,10];
-            mat[0, 0] = 10;
-            mat[0, 1] = 12;
-            mat[0, 2] = 10.5;
-            mat[0, 3] = 10.7;
-            mat[0, 4] = 11.5;
-            mat[0, 5] = 11.8;
-            mat[0, 6] = 12.3;
-            mat[0, 7] = 12.5;
-            mat[0, 8] = 12.5;
-            mat[0, 9] = 13.1;
-            mat[1, 0] = 5.1;
-            mat[1, 1] = 5.6;
-            mat[1, 2] = 5.7;
-            mat[1, 3] = 5.5;
-            mat[1, 4] = 5.4;
-            mat[1, 5] = 5.3;
-            mat[1, 6] = 5.2;
-            mat[1, 7] = 5.0;
-            mat[1, 8] = 5.2;
-            mat[1, 9] = 5.3;
-            /* получение среднего значения для каждого столбца */
-            for (int j = 0; j < countImages; j++) 
+            /* получение среднего значения для каждой строки, т.е. каждого изображения */
+
+            using (FileStream fsSource = new FileStream("AllColumnEze.txt", FileMode.Open, FileAccess.Read))
             {
-                double sum = 0;
-                for (int i = 0; i < 10 /*countImages*/; i++)
-                {
-                    //if (nums[i] == null)
-                      //  break;
-                    //else
-                    //{
-                        sum += mat[j,i];
-                        mean = sum / countImages;
-                    //}
+                byte[] bufer = new byte[fsSource.Length];           //массив, куда передастся файл
+                fsSource.Read(bufer, 0, (int)fsSource.Length);      // передаём весь файл в массив
+                for (int i = 0; i < countImages; i++)               // идёт по изображениям
+                {               
+                    for (int k = i * h; k < h * (i + 1); k++)       // идёт по байтам в изображении
+                    {
+                        mean += bufer[k];
+                    }
+                    meanMas[i] = (mean / h);
+                    mean = 0;
                 }
-                meanMass[j] = mean;
             }
 
             /*РАСЧЁТ ДИСПЕРСИИ*/
+
             for (int j = 0; j < countImages; j++)
             {
                 double semiDispersion = 0,
@@ -531,85 +490,82 @@ namespace PainCsharp
                 for (int i = 0; i < countImages; i++)
                 {
                     if (nums[i] != null)
-                        semiDispersion += Math.Pow((/*nums*/mat[i,j] - meanMass[j]), 2); // тут следующая ошибка
-                    else
-                    {
-                        // semiDispersion += Math.Pow(meanMass[j], 2);
-                        semiDispersion += (Math.Pow(meanMass[j], 2)) * (countImages - i);
-                        break;
-                    }
+                        semiDispersion += Math.Pow((nums[i][j] - meanMass[j]), 2); // тут следующая ошибка
                 }
-                dispersion = semiDispersion / (countImages-1);
+                dispersion = semiDispersion / (countImages - 1);
                 dispmatr[j] = dispersion;
             }
-            // вывод дисперсии в файл:
-            StreamWriter file = new StreamWriter("E:\\Results.txt");
-            //file.WriteLine("Дисперсии:");
-            //for (int i = 0; i < n; i++)
+            //// вывод дисперсии в файл:
+            //StreamWriter file = new StreamWriter("E:\\Results.txt");
+            ////file.WriteLine("Дисперсии:");
+            ////for (int i = 0; i < n; i++)
+            ////{
+            ////    file.WriteLine(dispmatr[i]);
+            ////}
+            ///* Похоже на КОВАРИАЦИОННУЮ МАТРИЦУ, А НЕ КОРРЕЛЯЦИОННУЮ */
+            //file.WriteLine("Ковариационная матрица:");
+            //// Получение ковариационной матрицы
+            ///* из-за того, что nXn - слишком много, жертвую скоростью
+            // * и каждый столбец матрицы будет строиться отдельно
+            // */
+            //for (int i = 0; i < 3; i++)
             //{
-            //    file.WriteLine(dispmatr[i]);
+            //    MatrixKOne = GetCovarMatrix(nums, meanMass, countImages, i);
+            //    if(MatrixKOne[0]== 0 && MatrixKOne[1] == 0 && MatrixKOne[110] == 0)
+            //    {
+            //        MessageBox.Show("We have a problem - all elements from matrixKOne equals a 0");
+            //        file.Close();
+            //        break;
+            //    }
+            //    for (int j = 0; j < countImages; j++)
+            //    {
+            //        file.Write(MatrixKOne[j] + " ");
+            //    }
+            //    file.WriteLine();
             //}
-            /* Похоже на КОВАРИАЦИОННУЮ МАТРИЦУ, А НЕ КОРРЕЛЯЦИОННУЮ */
-            file.WriteLine("Ковариационная матрица:");
-            // Получение ковариационной матрицы
-            for (int i = 0; i < 3; i++)
-            {
-                MatrixKOne = GetCovarMatrix(nums, meanMass, countImages, i);
-                if(MatrixKOne[0]== 0 && MatrixKOne[1] == 0 && MatrixKOne[110] == 0)
-                {
-                    MessageBox.Show("We have a problem - all elements from matrixKOne equals a 0");
-                    file.Close();
-                    break;
-                }
-                for (int j = 0; j < countImages; j++)
-                {
-                    file.Write(MatrixKOne[j] + " ");
-                }
-                file.WriteLine();
-            }
-            byte f = Convert.ToByte(MatrixKOne[2]);
-            //File.WriteAllBytes("LOL.txt", MatrixKOne.ToArray());
-            //MatrixK = GetCovarMatrix(nums, meanMass, n);
+            //byte f = Convert.ToByte(MatrixKOne[2]);
+            ////File.WriteAllBytes("LOL.txt", MatrixKOne.ToArray());
+            ////MatrixK = GetCovarMatrix(nums, meanMass, n);
+            ////for (int i = 0; i < n; i++)
+            ////{
+            ////    for (int j = 0; j < n; j++)
+            ////    {
+            ////        file.Write(MatrixK[i][j] + " ");
+            ////    }
+            ////    file.WriteLine();
+            ////}
+            ///*
+            //// получение ковариационной матрицы из корреляционной
+            //file.WriteLine("Ковариационная матрица:");
             //for (int i = 0; i < n; i++)
             //{
             //    for (int j = 0; j < n; j++)
             //    {
-            //        file.Write(MatrixK[i][j] + " ");
+            //        MatrixK[i,j] = correlation[i,j] * Math.Sqrt(correlation[i,i] * correlation[j,j]);
+            //        file.Write(MatrixK[i, j] + " ");
+            //        //MessageBox.Show(MatrixK[i, j] + " a[" + i.ToString() + "][" + j.ToString() + "] ");
             //    }
             //    file.WriteLine();
-            //}
-            /*
-            // получение ковариационной матрицы из корреляционной
-            file.WriteLine("Ковариационная матрица:");
-            for (int i = 0; i < n; i++)
-            {
-                for (int j = 0; j < n; j++)
-                {
-                    MatrixK[i,j] = correlation[i,j] * Math.Sqrt(correlation[i,i] * correlation[j,j]);
-                    file.Write(MatrixK[i, j] + " ");
-                    //MessageBox.Show(MatrixK[i, j] + " a[" + i.ToString() + "][" + j.ToString() + "] ");
-                }
-                file.WriteLine();
-            }*/
-            //   CalcOwnValue(MatrixK, dispmatr, n);
-            //file.Close();
-            double[] MatrixResultOne = MatrixForRot.RotationMethod(MatrixK, countImages,1);
+            //}*/
+            ////   CalcOwnValue(MatrixK, dispmatr, n);
+            ////file.Close();
+            //double[] MatrixResultOne = MatrixForRot.RotationMethod(MatrixK, countImages,1);
 
-            double[][] MatrixResult = MatrixForRot.RotationMethod(MatrixK, countImages);
-            file.WriteLine("Собственные значения:");
-            for (int i = 0; i < countImages; i++)
-            {
-                file.Write(MatrixResult[i][i].ToString("0.000") + " ");
-                file.WriteLine();
-            }
-            file.WriteLine("Собственные вектора:");
-            for (int j = 0; j < countImages; j++) 
-            {
-                for (int i = 0; i < countImages; i++)
-                    file.Write(MatrixForRot.MatrixForOwnVectors[i][j].ToString("0.000") + " ");
-                file.WriteLine();
-            }
-            file.Close();
+            //double[][] MatrixResult = MatrixForRot.RotationMethod(MatrixK, countImages);
+            //file.WriteLine("Собственные значения:");
+            //for (int i = 0; i < countImages; i++)
+            //{
+            //    file.Write(MatrixResult[i][i].ToString("0.000") + " ");
+            //    file.WriteLine();
+            //}
+            //file.WriteLine("Собственные вектора:");
+            //for (int j = 0; j < countImages; j++) 
+            //{
+            //    for (int i = 0; i < countImages; i++)
+            //        file.Write(MatrixForRot.MatrixForOwnVectors[i][j].ToString("0.000") + " ");
+            //    file.WriteLine();
+            //}
+            //file.Close();
         }
 
 
