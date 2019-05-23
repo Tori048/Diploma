@@ -21,8 +21,8 @@ namespace PainCsharp
             InitializeComponent();
         }
         private List<Image> files = new List<Image>();
-        private List<Image> files2 = new List<Image>(); // для выбора кучи изображений
-        private int countImages;
+       // private List<Image> files2 = new List<Image>(); // для выбора кучи изображений
+        private int countImages;        //количество выбранных изображений
         public int GetcountImages()
         {
             return countImages;
@@ -214,7 +214,7 @@ namespace PainCsharp
          * в выбранный текстбокс
          * откуда здесь брать разрешение изображения пока не знаю, только если в файле хранить
          */
-        private void button4_Click(object sender, EventArgs e)      //сработает для STRINGEZE       
+        private void FromTxtToTB(object sender, EventArgs e)      //сработает для STRINGEZE       
         {
             List<byte> file1 = new List<byte>();
             int w = 320, h = 1200;
@@ -299,6 +299,8 @@ namespace PainCsharp
         {
             if (comboBox3.Text != "")
             {
+                List<Image> files2 = new List<Image>();
+                Bitmap bitmap;
                 int Width = 0;  //ширина изображения
                 int Height = 0; //высота изображения
                 progressBarConvertToTxt.Value = 0;
@@ -315,7 +317,7 @@ namespace PainCsharp
                 foreach (string i in OpenManyImageForFirstStep.FileNames)
                 {
                     files2.Add(Image.FromFile(OpenManyImageForFirstStep.FileNames[j]));
-                    Bitmap bitmap = new Bitmap(files2[j]);                              //добавили изображение в битмап
+                    bitmap = new Bitmap(files2[0]);                              //добавили изображение в битмап
                     /* обрабатываем изображения */
                     if(j > 0)
                     {
@@ -354,6 +356,7 @@ namespace PainCsharp
                     }
                     progressBarConvertToTxt.Value++;
                     bitmap.Dispose();
+                    files2.Clear();
                     progressConvertToTxt.Text = "Изображений обработанно " + (j+1).ToString();
                     j++;
                 }
@@ -361,35 +364,18 @@ namespace PainCsharp
             }
         }
 
-         private static double[] GetCovarMatrix(double [][]nums,double[] means, long n,int iter)
+        private double GetCovarMatrix(byte[][] nums, double[] means, int jter, int iter, int h)
         {
-            int i = iter;
-            double[] mas = new double[n];
-         //   for (int i = 0; i < n; i++)
-         //   {
-                for (int j = i; j < n; j++)
-                {
-                    //  corr[j] = new double[j + 1];
-
-                    double sum = 0;
-                    for (int k = 0; k < n; k++)
-                    {
-                        if (nums[k] != null)
-                            sum += ((nums[k][i] - means[i]) * (nums[k][j] - means[j]));
-                        else
-                        {
-                            if (k != n - 1)
-                                sum += ((means[i] * means[j]) * (n - k + 1));
-                            else
-                                sum += (means[i] * means[j]);
-                            break;
-                        }
-                    }
-                    mas[j] = sum / (n - 1);
-                    //corr[i][j] = corr[j][i] = sum / (n - 1);
-          //      }
+            double cov = 0;
+            for (int j = 0; j < countImages; j++)
+            {
+                if (iter != jter)                                                       /* не дисперсии */
+                    cov += ((nums[0][j] - means[iter]) * (nums[1][j] - means[jter]));
+                else                                                                    /* дисперсии */
+                    cov += Math.Pow(nums[0][j] - means[iter], 2);
             }
-            return mas;
+            cov = cov / (countImages-1);                                                     /* На что делить - кол-во изоражений, или кол-во пикселей в изображении???*/
+            return cov;
         }
         /* функция для расчёта корреляционной матрицы
          * Входные параметры:
@@ -456,13 +442,18 @@ namespace PainCsharp
                 return;
             Rotation MatrixForRot = new Rotation(progressBarConvertToTxt, progressConvertToTxt, countImages);     // Для расчёта собственных значений и векторов
             int  h = CAS.AllPictures.Length; // количество пикселей в изображении (кол-во стобцов)
-            double[,] CompareVectors = new double[2, h]; // матрица для векторов, которые будем сравнивать и из которых будем составлять матрицу ковариаций
-            double mean = 0;                           //
-            double[] meanMas = new double[countImages];            //массив для среднего значения в каждом изображении == вектор средних
+            byte[][] CompareVectors = new byte[2][]; // матрица для векторов, которые будем сравнивать и из которых будем составлять матрицу ковариаций
+            for(int i = 0; i < 2; i++)
+            {
+                CompareVectors[i] = new byte[h];
+            }
 
+            double[] meanMas = new double[countImages];            //массив для среднего значения в каждом изображении == вектор средних
             double[] dispmatr = new double[countImages];         //массив для дисперсий
+
             double[][] MatrixK = new double[countImages][];       //ковариационная матрица
-            double[] MatrixKOne = new double[countImages];
+            for (int i = 0; i < countImages; i++)
+                MatrixK[i] = new double[countImages];
 
             /* получение среднего значения для каждой строки, т.е. каждого изображения */
 
@@ -471,30 +462,47 @@ namespace PainCsharp
                 byte[] bufer = new byte[fsSource.Length];           //массив, куда передастся файл
                 fsSource.Read(bufer, 0, (int)fsSource.Length);      // передаём весь файл в массив
                 for (int i = 0; i < countImages; i++)               // идёт по изображениям
-                {               
+                {
+                    double mean = 0;
                     for (int k = i * h; k < h * (i + 1); k++)       // идёт по байтам в изображении
                     {
                         mean += bufer[k];
                     }
                     meanMas[i] = (mean / h);
-                    mean = 0;
                 }
+                fsSource.Close();
             }
-
-            /*РАСЧЁТ ДИСПЕРСИИ*/
-
-            for (int j = 0; j < countImages; j++)
+            for (int i = 0; i < countImages; i++)   //строка
             {
-                double semiDispersion = 0,
-                       dispersion = 0; //дисперсия для 
-                for (int i = 0; i < countImages; i++)
+                using (FileStream fsSource = new FileStream("AllColumnEze.txt", FileMode.Open, FileAccess.Read))
                 {
-                    if (nums[i] != null)
-                        semiDispersion += Math.Pow((nums[i][j] - meanMass[j]), 2); // тут следующая ошибка
+                    byte[] bufer = new byte[fsSource.Length];           //массив, куда передастся файл
+                    fsSource.Read(bufer, 0, (int)fsSource.Length);      // передаём весь файл в массив
+                    /* Чтобы взять 2 вектора из матрицы, для cov */
+                    for (int j = 0; j < countImages; j++)       //столбец
+                    {
+                        if(i==j)
+                        {
+                            Array.Copy(bufer, h*i, CompareVectors[0], 0, h);
+                            Array.Copy(CompareVectors[0], 0, CompareVectors[1], 0, h);
+                        }
+                        else if (i != countImages -1)
+                        {
+                            Array.Copy(bufer, h * i, CompareVectors[0], 0, h);
+                            Array.Copy(bufer, h * (i+1), CompareVectors[1], 0, h);
+                        }
+                        else
+                        {
+                            Array.Copy(bufer, h * i, CompareVectors[0], 0, h);
+                            Array.Copy(CompareVectors[0], 0, CompareVectors[1], 0, h);
+                        }
+
+                        double cov = GetCovarMatrix(CompareVectors, meanMas, j, i, h);
+                        MatrixK[i][j] = cov;
+                    }
                 }
-                dispersion = semiDispersion / (countImages - 1);
-                dispmatr[j] = dispersion;
             }
+
             //// вывод дисперсии в файл:
             //StreamWriter file = new StreamWriter("E:\\Results.txt");
             ////file.WriteLine("Дисперсии:");
@@ -567,6 +575,8 @@ namespace PainCsharp
             //}
             //file.Close();
         }
+
+
 
 
         //TODO: сделай матрицу КОВАРИАЦИЙ треугольной, найди собственные вектора и собственные числа
