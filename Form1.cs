@@ -522,21 +522,33 @@ namespace PainCsharp
                 }
             }
 
-           /* нахождение собственных чисел и векторов */
-           double[][] MatrixResult = MatrixForRot.RotationMethod(MatrixK);
-            //file.WriteLine("Собственные значения:");
-            //for (int i = 0; i < countImages; i++)
-            //{
-            //    file.Write(MatrixResult[i][i].ToString("0.000") + " ");
-            //    file.WriteLine();
-            //}
-            //file.WriteLine("Собственные вектора:");
-            //for (int j = 0; j < countImages; j++) 
-            //{
-            //    for (int i = 0; i < countImages; i++)
-            //        file.Write(MatrixForRot.MatrixForOwnVectors[i][j].ToString("0.000") + " ");
-            //    file.WriteLine();
-            //}
+            /* нахождение собственных чисел и векторов */
+            using (StreamWriter file = new StreamWriter("Result.txt", true, System.Text.Encoding.Default))
+            {
+                file.WriteLine("Матрица ковариаций:");
+                for (int i = 0; i < countImages; i++)
+                {
+                    for (int j = 0; j < countImages; j++)
+                        file.Write(MatrixK[i][j].ToString("0.00"));
+                    file.WriteLine();
+                }
+                double[][] MatrixResult = MatrixForRot.RotationMethod(MatrixK);
+                file.WriteLine("Собственные значения:");
+                for (int i = 0; i < countImages; i++)
+                {
+                    file.Write(MatrixResult[i][i].ToString("0.000") + " ");
+                    file.WriteLine();
+                }
+                file.WriteLine("Собственные вектора:");
+                for (int j = 0; j < countImages; j++)
+                {
+                    for (int i = 0; i < countImages; i++)
+                    {
+                        file.Write(MatrixForRot.MatrixForOwnVectors[i][j].ToString("0.000") + " ");
+                    }
+                    file.WriteLine();
+                }
+            }
             //file.Close();
         }
 

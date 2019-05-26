@@ -21,7 +21,6 @@ namespace PainCsharp
             
         public double[][] Multiplication(double[][] a, double[][] b)//, double[,] c)
         {
-            //if (a.GetLength(1) != b.GetLength(0)) throw new Exception("Матрицы нельзя перемножить");
             double[][] r = new double[n][]; // результирющая матрица
             for (int i = 0; i < n; i++)
             {
@@ -43,7 +42,6 @@ namespace PainCsharp
         /* Метод Якоби
          * Входящие значения:
          * Matrix - матрица, для которой будут искаться собственные значения и вектора
-         * n - размерность матрицы
          */
         public double[][] RotationMethod(double[][] Matrix)
         {
@@ -128,7 +126,7 @@ namespace PainCsharp
                 /* Заканчиваем транспонирование матрицы*/
                 /* Вращаем */
                 double[][] SemiIT;
-                SemiIT = Multiplication(tmpMat, Matrix);//, RotMat);
+                SemiIT = Multiplication(tmpMat, Matrix);
                 Matrix = Multiplication(SemiIT, RotMat);
                 /* Готово. Далее вновь сравниваем */
                 //RotationMethod(Matrix, n);
