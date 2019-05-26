@@ -529,7 +529,7 @@ namespace PainCsharp
                 for (int i = 0; i < countImages; i++)
                 {
                     for (int j = 0; j < countImages; j++)
-                        file.Write(MatrixK[i][j].ToString("0.00"));
+                        file.Write(MatrixK[i][j].ToString("0.000")+" ");
                     file.WriteLine();
                 }
                 double[][] MatrixResult = MatrixForRot.RotationMethod(MatrixK);
@@ -549,6 +549,7 @@ namespace PainCsharp
                     file.WriteLine();
                 }
             }
+            MessageBox.Show("Матрица ковариаций посчитана и записана");
             //file.Close();
         }
 
