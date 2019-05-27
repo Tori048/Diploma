@@ -205,9 +205,9 @@
             // 
             this.button9.Location = new System.Drawing.Point(669, 209);
             this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(186, 23);
+            this.button9.Size = new System.Drawing.Size(186, 45);
             this.button9.TabIndex = 22;
-            this.button9.Text = "Пройтись по изображениям";
+            this.button9.Text = "Сформировать матрицу из изображений";
             this.toolTip1.SetToolTip(this.button9, "1 - По столбцам напрямую\r\n2 - По столбцам змейкой\r\n3 - По строкам напрямую\r\n4 - П" +
         "о строкам змейкой");
             this.button9.UseVisualStyleBackColor = true;
@@ -221,7 +221,7 @@
             "2",
             "3",
             "4"});
-            this.comboBox3.Location = new System.Drawing.Point(860, 211);
+            this.comboBox3.Location = new System.Drawing.Point(860, 222);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(37, 21);
             this.comboBox3.TabIndex = 23;
@@ -233,7 +233,7 @@
             // 
             // Matrix
             // 
-            this.Matrix.Location = new System.Drawing.Point(669, 247);
+            this.Matrix.Location = new System.Drawing.Point(669, 275);
             this.Matrix.Name = "Matrix";
             this.Matrix.Size = new System.Drawing.Size(186, 23);
             this.Matrix.TabIndex = 24;
@@ -243,7 +243,7 @@
             // 
             // Eps
             // 
-            this.Eps.Location = new System.Drawing.Point(860, 247);
+            this.Eps.Location = new System.Drawing.Point(860, 275);
             this.Eps.Name = "Eps";
             this.Eps.Size = new System.Drawing.Size(38, 20);
             this.Eps.TabIndex = 25;
