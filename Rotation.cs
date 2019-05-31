@@ -131,7 +131,7 @@ namespace PainCsharp
                 /* Готово. Далее вновь сравниваем */
                 //RotationMethod(Matrix, n);
             }
-            while (max > eps);
+            while (max > eps);//когда собственное число меньше погрешности - тоже вариант остановки
 
             return Matrix;
         }

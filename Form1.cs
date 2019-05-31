@@ -361,6 +361,8 @@ namespace PainCsharp
                     j++;
                 }
                 MessageBox.Show("Обработка изображений закончена");
+                progressBarConvertToTxt.Visible = false;
+                progressConvertToTxt.Visible = false;
             }
         }
         /* функция для расчёта одного элемента ковариационной матрицыэ
@@ -368,68 +370,17 @@ namespace PainCsharp
          * double[] means - средние значения всех векторов
          * int jter - столбец, в котором расположен расчитываемый элемент
          * int iter - строка, в которой расположен расчитываемый элемент
-         * h - возможно, лишняя хрень
+         * h - количество пикселей в изображении
          */
         private double GetCovarMatrix(byte[][] nums, double[] means, int jter, int iter, int h)
         {
             double cov = 0;
-            for (int j = 0; j < countImages; j++)
+            for (int j = 0; j < h; j++)   
             {
-            //    if (iter != jter)                                                       /* не дисперсии */
-                    cov += ((nums[0][j] - means[iter]) * (nums[1][j] - means[jter]));
-             //   else                                                                    /* дисперсии */
-              //      cov += Math.Pow(nums[0][j] - means[iter], 2);
+                cov += ((nums[0][j] - means[iter]) * (nums[1][j] - means[jter]));
             }
-            cov = (cov/(countImages-1));                                                     /* На что делить - кол-во изоражений, или кол-во пикселей в изображении???*/
+            cov = (cov/(h-1));                                                     /* На что делить - кол-во изоражений, или кол-во пикселей в изображении???*/
             return cov;
-        }
-        /* функция для расчёта корреляционной матрицы
-         * Входные параметры:
-         * double[][] nums - исходная матрица
-         * double[] means - среднии значения столбцов исходной матрицы
-         * int n - размерность исходной матрицы
-         * Возвращаемое значение:
-         * double [,] corr - корреляционная матрица
-         */
-        private static double[][] GetCovarMatrix(double[][] nums, double[] means, long n)
-        {
-            /* TODO:
-             * перепиши алгоритм, ибо там где выделяется дохуя памяти - vs ругается на это
-             * подумай, как переделать действия в циклах так, не потребовалось выделение
-             * ресурсов для связанной с нулями хери
-             */
-            double[][] corr = new double[n][];
-
-            //теперь ты будешь тут хранить поддиаганальную часть матрицы.
-            //for (int k = 1; k < 50; k++)
-            //{
-            //    for (long i = ((k - 1) * (n / 50)); i < k * (n / 50); i++)
-            //        corr[i] = new double[i + 1];
-            //}
-            ArrayList list = new ArrayList();
-
-            for (int i = 0; i < n; i++)
-            {
-                for (int j = i; j < n; j++)
-                {
-                      //  corr[j] = new double[j + 1];
-                
-                    double sum = 0;
-                    for (int k = 0; k < n; k++)
-                    {
-                        if (nums[k] != null)
-                            sum += ((nums[k][i] - means[i]) * (nums[k][j] - means[j]));
-                        else
-                        {
-                            sum += ((means[i] * means[j])*(n-k+1));
-                            break;
-                        }
-                    }
-                   // /*corr[i][j] =*/ corr[j][i] = sum / (n - 1);
-                    list.Add(sum/(n - 1));
-                }
-            }
-            return corr;
         }
 
         /*Строит ковариационную матрицу
@@ -550,10 +501,15 @@ namespace PainCsharp
                 }
             }
             MessageBox.Show("Матрица ковариаций посчитана и записана");
-            //file.Close();
         }
 
-
+        /* TODO:
+         * после нахождения собственных векторов и собственных числел сделай:
+         * скалярное произведеие собственных векторов и исходного изобреажения
+         * формула точная пока не найдена
+         * в пятницу в 3 - 4 позвонить
+         * 
+         */
 
 
         //TODO: сделай матрицу КОВАРИАЦИЙ треугольной, найди собственные вектора и собственные числа
