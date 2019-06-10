@@ -13,6 +13,7 @@ namespace PainCsharp
     {
         private List<Byte> fileForColorByte = new List<Byte>();
         private bool Mono = true;
+        
         // private static List<string> SS = new List<string>();
         public byte[] AllPictures { get; set; }
         /* Объединяет все изображения в 1 массив AllPictures и записывает
@@ -43,11 +44,11 @@ namespace PainCsharp
         public void ColumnEze(Bitmap bitmap, int C)
         {
             Color color;        //для яркости пиксела
-            for (int y = 0; y < bitmap.Width; y++)
+            for (int y = 0; y < 100; y++)//bitmap.Width; y++)
             {
                 if (Mono == true)
                 {
-                    for (int x = 0; x < bitmap.Height; x++)
+                    for (int x = 0; x < 100; x++)//bitmap.Height; x++)
                     {
                         color = bitmap.GetPixel(y, x);
                         //    Int32 bright32;
@@ -88,7 +89,7 @@ namespace PainCsharp
             {
                 if (Mono == false)  //если нашли что-то не монохромное
                     break;
-                for (int x = 0; x < bitmap.Height; x++)
+                for (int x = 0; x < 100/* bitmap.Height*/; x++)
                 {
                     if (Mono == false)
                         break;
@@ -107,7 +108,7 @@ namespace PainCsharp
                         fileForColorByte.Clear();
                         break;
                     }
-                    if (x == bitmap.Height - 1)
+                    if (x == 100/* bitmap.Height*/ - 1)
                     {
                         y++;
                         int xx = x;
@@ -140,11 +141,11 @@ namespace PainCsharp
         public void StringEze(Bitmap bitmap, int C)
         {
             Color color;
-            for (int y = 0; y < bitmap.Height; y++)
+            for (int y = 0; y < 100/*  bitmap.Height*/; y++)
             {
                 if (Mono == false)
                     break;
-                for (int x = 0; x < bitmap.Width; x++)
+                for (int x = 0; x < 100/*  bitmap.Width*/; x++)
                 {
 
                     color = bitmap.GetPixel(x, y);
@@ -175,11 +176,11 @@ namespace PainCsharp
         public void StringZmey(Bitmap bitmap, int C)
         {
             Color color;
-            for (int y = 0; y < bitmap.Height; y++)
+            for (int y = 0; y < 100/* bitmap.Height*/; y++)
             {
                 if (Mono == false)
                     break;
-                for (int x = 0; x < bitmap.Width; x++)
+                for (int x = 0; x < 100/*  bitmap.Width*/; x++)
                 {
                     color = bitmap.GetPixel(x, y);
                     // Int32 bright;
@@ -195,7 +196,7 @@ namespace PainCsharp
                         Byte R8 = color.R;
                         fileForColorByte.Add(R8);
 
-                        if (x == bitmap.Width - 1)
+                        if (x == 100/* bitmap.Width */- 1)
                         {
                             y++;
                             int xx = x;

@@ -16,7 +16,7 @@ namespace PainCsharp
         }
         private static int n;
         private double eps;
-        public double[][] MatrixForOwnVectors { get; set; } = new double[n][];
+        public double[][] MatrixForOwnVectors = new double[n][];
         public double[][] Matrix { get; set; } = new double[n][];
             
         public double[][] Multiplication(double[][] a, double[][] b)//, double[,] c)
@@ -135,6 +135,16 @@ namespace PainCsharp
 
             return Matrix;
         }
-    }
 
+        public double Scal ( double[][] Vectors)
+        {
+            double sum = 0;
+            for (int i = 0; i < MatrixForOwnVectors.GetLength(1); i++)
+            {
+                sum += Vectors[0][i] * Vectors[1][i];
+            }
+            return sum;
+        }
+    }
 }
+

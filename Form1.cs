@@ -21,7 +21,6 @@ namespace PainCsharp
             InitializeComponent();
         }
         private List<Image> files = new List<Image>();
-       // private List<Image> files2 = new List<Image>(); // для выбора кучи изображений
         private int countImages;        //количество выбранных изображений
         public int GetcountImages()
         {
@@ -268,25 +267,6 @@ namespace PainCsharp
             }
         }
 
-        //private void button8_Click(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        numberOfImage = 50;
-        //        Form2 f = new Form2(int.Parse(Pixel_number.Text), numberOfImage,this);
-        //        f.Show();
-        //    }
-        //    catch(ArgumentNullException)
-        //    {
-        //        MessageBox.Show("Не ввёл номер пикселя");
-        //    }
-        //    catch (FormatException)
-        //    {
-        //        MessageBox.Show("Что-то ты ввёл не то");
-        //    }
-        //}
-
-
         private void Pixel_number_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!Char.IsControl(e.KeyChar) && !Char.IsDigit(e.KeyChar))
@@ -319,14 +299,14 @@ namespace PainCsharp
                     files2.Add(Image.FromFile(OpenManyImageForFirstStep.FileNames[j]));
                     bitmap = new Bitmap(files2[0]);                              //добавили изображение в битмап
                     /* обрабатываем изображения */
-                    if(j > 0)
-                    {
-                        if (Width != bitmap.Width || Height != bitmap.Height)
-                        {
-                            MessageBox.Show("У изображений разные размеры. Обработка прервана");
-                            return;
-                        }
-                    }
+                    //if(j > 0)
+                    //{
+                    //    if (Width != bitmap.Width || Height != bitmap.Height)
+                    //    {
+                    //        MessageBox.Show("У изображений разные размеры. Обработка прервана");
+                    //        return;
+                    //    }
+                    //}
                     switch (int.Parse(comboBox3.Text))
                     {
                         case 1:
@@ -347,8 +327,8 @@ namespace PainCsharp
                     }
                     if (j == 0)
                     {
-                        Width = bitmap.Width;
-                        Height = bitmap.Height;
+                        Width = 100/* bitmap.Width*/;
+                        Height = 100/* bitmap.Height*/;
                         //progressBarConvertToTxt.Maximum = files2[0].W;
                         progressBarConvertToTxt.Visible = true;
                         progressConvertToTxt.Visible = true;
@@ -376,8 +356,16 @@ namespace PainCsharp
          */
         private double GetCovarMatrix(byte[][] nums, double[] means, int jter, int iter, int h)
         {
+            /*
+              double cov = 0;
+            for (int j = 0; j < countImages; j++)   
+            {
+                cov += ((nums[0][j] - means[iter]) * (nums[1][j] - means[jter]));
+            }
+            cov = (cov/(h-1));    
+             */
             double cov = 0;
-            for (int j = 0; j < h; j++)   
+            for (int j = 0; j < countImages; j++)//h; j++)   
             {
                 cov += ((nums[0][j] - means[iter]) * (nums[1][j] - means[jter]));
             }
@@ -385,20 +373,33 @@ namespace PainCsharp
             return cov;
         }
 
-        /*Строит ковариационную матрицу
-         * Массив AllPictures - получен из ColumnAndString, в нём все изображения
-         * записаны построчно.
-         * Поскольку кол-во столбцов в несколько тысяч раз превышает
-         * кол-во строк, а в итоге должна быть квадратая матрица,
-         * было принято решение объявить массив из массивов nums.
-         * Он будет содержать в себе AllPictures, а оставшиеся пустые
-         * места заполнит 0.
-         * */
 
-        private void Matrix_Click(object sender, EventArgs e)
+        public byte[,] transp(int[,] mas)
         {
-            if (countImages < 1)
-                return;
+            byte[,] temp = new byte[mas.GetLength(1), mas.GetLength(0)];
+
+            for (int i = 0; i < temp.GetLength(0); i++)
+            {
+                for (int j = 0; j < temp.GetLength(1); j++)
+                {
+                    temp[i, j] = (byte)mas[j, i];
+                }
+            }
+            return temp;
+        }
+
+        /*Строит ковариационную матрицу
+ * Массив AllPictures - получен из ColumnAndString, в нём все изображения
+ * записаны построчно.
+ * Поскольку кол-во столбцов в несколько тысяч раз превышает
+ * кол-во строк, а в итоге должна быть квадратая матрица,
+ * было принято решение объявить массив из массивов nums.
+ * Он будет содержать в себе AllPictures, а оставшиеся пустые
+ * места заполнит 0.
+ * */
+
+        private void BuildMatrix()
+        {
             double eps;
             if (Eps.Text == "")
             {
@@ -417,85 +418,136 @@ namespace PainCsharp
                     return;
                 }
             }
-            Rotation MatrixForRot = new Rotation(countImages,eps);     // Для расчёта собственных значений и векторов
-            int  h = CAS.AllPictures.Length; // количество пикселей в изображении (кол-во стобцов)
+            Rotation MatrixForRot = new Rotation(10000, eps);     // Для расчёта собственных значений и векторов
+            int h = CAS.AllPictures.Length; // количество пикселей в изображении (кол-во стобцов)
             byte[][] CompareVectors = new byte[2][]; // матрица для векторов, которые будем сравнивать и из которых будем составлять матрицу ковариаций
-            for(int i = 0; i < 2; i++)
+            for (int i = 0; i < 2; i++)
             {
                 CompareVectors[i] = new byte[h];
             }
 
-            double[] meanMas = new double[countImages];            //массив для среднего значения в каждом изображении == вектор средних
-            double[] dispmatr = new double[countImages];         //массив для дисперсий
+            double[] meanMas = new double[10000 /*countImages*/];            //массив для среднего значения в каждом изображении == вектор средних
+            double[][] MatrixK = new double[10000][];       //ковариационная матрица
+            for (int i = 0; i < 10000; i++)
+                MatrixK[i] = new double[10000];
 
-            double[][] MatrixK = new double[countImages][];       //ковариационная матрица
-            for (int i = 0; i < countImages; i++)
-                MatrixK[i] = new double[countImages];
-
-            /* получение среднего значения для каждой строки, т.е. каждого изображения */
-
+            int[,] a = new int[countImages, h];     //транспонируем матрицу, чтобы алгоритмы не менять, ибо я путаюсь постоянно
+            byte[,] temp = new byte[a.GetLength(1), a.GetLength(0)];
+            /* получение среднего значения для каждого пиксела*/
             using (FileStream fsSource = new FileStream("AllColumnEze.txt", FileMode.Open, FileAccess.Read))
             {
                 byte[] bufer = new byte[fsSource.Length];           //массив, куда передастся файл
                 fsSource.Read(bufer, 0, (int)fsSource.Length);      // передаём весь файл в массив
-                for (int i = 0; i < countImages; i++)               // идёт по изображениям
+
+
+                for (int k = 0; k < countImages * h;) // транспонируем
+                {
+                    for (int i = 0; i < countImages; i++)
+                        for (int j = 0; j < h; j++, k++)
+                        {
+                            a[i, j] = bufer[k];
+                        }
+                }
+                temp = transp(a);
+                for (int i = 0; i < temp.GetLength(0); i++)
                 {
                     double mean = 0;
-                    for (int k = i * h; k < h * (i + 1); k++)       // идёт по байтам в изображении
-                    {
-                        mean += bufer[k];
-                    }
-                    meanMas[i] = (mean / h);
+                    for (int j = 0; j < temp.GetLength(1); j++)
+                        mean += temp[i, j];
+                    meanMas[i] = mean / temp.GetLength(0);
                 }
                 fsSource.Close();
             }
-            for (int i = 0; i < countImages; i++)   //строка
+
+            /* получение среднего значения для каждой строки, т.е. каждого изображения */
+            //using (FileStream fsSource = new FileStream("AllColumnEze.txt", FileMode.Open, FileAccess.Read))
+            //{
+            //    byte[] bufer = new byte[fsSource.Length];           //массив, куда передастся файл
+            //    fsSource.Read(bufer, 0, (int)fsSource.Length);      // передаём весь файл в массив
+            //    for (int i = 0; i < countImages; i++)               // идёт по изображениям
+            //    {
+            //        double mean = 0;
+            //        for (int k = i * h; k < h * (i + 1); k++)       // идёт по байтам в изображении
+            //        {
+            //            mean += bufer[k];
+            //        }
+            //        meanMas[i] = (mean / h);
+            //    }
+            //    fsSource.Close();
+            //}
+            //for (int i = 0; i < 10000; i++)   //столбец
+            //{
+
+
+            //using (FileStream fsSource = new FileStream("AllColumnEze.txt", FileMode.Open, FileAccess.Read))
+            //{
+            //    byte[] bufer = new byte[fsSource.Length];           //массив, куда передастся файл
+            //    fsSource.Read(bufer, 0, (int)fsSource.Length);      // передаём весь файл в массив
+            /* Чтобы взять 2 столбца-вектора из матрицы, для cov */
+            for (int i = 0; i < 10000; i++)   //столбец в матрице ковариаций
             {
-                using (FileStream fsSource = new FileStream("AllColumnEze.txt", FileMode.Open, FileAccess.Read))
+                for (int j = 0; j < 10000; j++) // строка в матрице ковариаций
                 {
-                    byte[] bufer = new byte[fsSource.Length];           //массив, куда передастся файл
-                    fsSource.Read(bufer, 0, (int)fsSource.Length);      // передаём весь файл в массив
-                    /* Чтобы взять 2 вектора из матрицы, для cov */
-                    for (int j = 0; j < countImages; j++)       //столбец
+                    for (int k = 0; k < countImages; k++)     //копирование нужных элементов для расчёта
                     {
-                        if(i == j)
-                        {
-                            Array.Copy(bufer, h*i, CompareVectors[0], 0, h);
-                            Array.Copy(CompareVectors[0], 0, CompareVectors[1], 0, h);
-                        }
+                        CompareVectors[0][k] = temp[i, k];
+                        if (i == j)
+                            CompareVectors[1][k] = temp[i, k];
                         else
                         {
-                            Array.Copy(bufer, h * i, CompareVectors[0], 0, h);
-                            Array.Copy(bufer, h*j, CompareVectors[1], 0, h);
+                            CompareVectors[1][k] = temp[j, k];
                         }
-                        double cov = GetCovarMatrix(CompareVectors, meanMas, j, i, h);
-                        MatrixK[i][j] = cov;
                     }
-                    fsSource.Close();
+                    double cov = GetCovarMatrix(CompareVectors, meanMas, j, i, h);
+                    MatrixK[i][j] = cov;
                 }
+
+                /* Чтобы взять 2 вектора из матрицы, для cov */
+
+
+
+
+                //for (int j = 0; j < countImages; j++)       //столбец
+                //{
+                //    if (i == j)
+                //    {
+                //        Array.Copy(bufer, h * i, CompareVectors[0], 0, h);
+                //        Array.Copy(CompareVectors[0], 0, CompareVectors[1], 0, h);
+                //    }
+                //    else
+                //    {
+                //        Array.Copy(bufer, h * i, CompareVectors[0], 0, h);
+                //        Array.Copy(bufer, h * j, CompareVectors[1], 0, h);
+                //    }
+                //    double cov = GetCovarMatrix(CompareVectors, meanMas, j, i, h);
+                //    MatrixK[i][j] = cov;
+                //}
+                // fsSource.Close();
             }
+            //    fsSource.Close();
+            //}
 
             /* нахождение собственных чисел и векторов */
             using (StreamWriter file = new StreamWriter("Result.txt", true, System.Text.Encoding.Default))
             {
-                file.WriteLine("Матрица ковариаций:");
-                for (int i = 0; i < countImages; i++)
-                {
-                    for (int j = 0; j < countImages; j++)
-                        file.Write(MatrixK[i][j].ToString("0.000")+" ");
-                    file.WriteLine();
-                }
+                //file.WriteLine("Матрица ковариаций:");
+                //for (int i = 0; i < 10000; i++)
+                //{
+                //    for (int j = 0; j < 10000; j++)
+                //        file.Write(MatrixK[i][j].ToString("0.000") + " ");
+                //    file.WriteLine();
+                //}
                 double[][] MatrixResult = MatrixForRot.RotationMethod(MatrixK);
                 file.WriteLine("Собственные значения:");
-                for (int i = 0; i < countImages; i++)
+                for (int i = 0; i < 10000; i++)
                 {
                     file.Write(MatrixResult[i][i].ToString("0.000") + " ");
                     file.WriteLine();
                 }
                 file.WriteLine("Собственные вектора:");
-                for (int j = 0; j < countImages; j++)
+                for (int j = 0; j < 10000; j++)
                 {
-                    for (int i = 0; i < countImages; i++)
+                    for (int i = 0; i < 10000; i++)
                     {
                         file.Write(MatrixForRot.MatrixForOwnVectors[i][j].ToString("0.000") + " ");
                     }
@@ -503,6 +555,17 @@ namespace PainCsharp
                 }
             }
             MessageBox.Show("Матрица ковариаций посчитана и записана");
+
+        }
+
+
+        private void Matrix_Click(object sender, EventArgs e)
+        {
+            if (countImages < 1)
+                return;
+            else
+                BuildMatrix();
+           
         }
 
         /* TODO:
@@ -510,7 +573,12 @@ namespace PainCsharp
          * скалярное произведеие собственных векторов и исходного изобреажения
          * формула точная пока не найдена
          * в пятницу в 3 - 4 позвонить
-         * 
+         * кодовые числа = 
+         * ряд k - кодовых чисел = кол0во собственных векторов
+         * ряд первый пиксль изображения*нпервая координата k собственного вектора
+         * сумма даст то число
+         * для 1 строки будет набор с(k)
+         * восстановление:
          */
 
 
