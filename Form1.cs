@@ -364,6 +364,8 @@ namespace PainCsharp
                 progressBarConvertToTxt.Visible = false;
                 progressConvertToTxt.Visible = false;
             }
+            else
+                MessageBox.Show("Не определён способ формирования матрицы");
         }
         /* функция для расчёта одного элемента ковариационной матрицыэ
          * byte[][] nums - 2 вектора, элементы которых участвуют в расчёте
